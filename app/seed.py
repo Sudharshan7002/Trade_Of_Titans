@@ -15,11 +15,17 @@ from app.models.trade import Trade
 from app.models.user import User
 
 
-DEFAULT_USERS = (
-    ("admin", "admin123", "admin"),
-    ("trading_center", "trading123", "trading_center"),
-    ("ranking", "ranking123", "ranking"),
-)
+import os
+
+def get_default_users():
+    return (
+        ("admin", os.getenv("ADMIN_PASSWORD", "admin123"), "admin"),
+        ("trading_center", os.getenv("TRADING_CENTER_PASSWORD", "trading123"), "trading_center"),
+        ("ranking", os.getenv("RANKING_PASSWORD", "ranking123"), "ranking"),
+    )
+
+
+DEFAULT_USERS = get_default_users()
 
 
 def reset_local_data() -> dict[str, int]:

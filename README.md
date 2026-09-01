@@ -20,7 +20,17 @@ To reset local data completely, run `.venv\Scripts\python -m app.seed`. This del
 - `trading_center` / `trading123` (Trading Desk & Direct Settlement)
 - `ranking` / `ranking123` (Global Standings & Podium)
 
-Change these passwords through database administration before using the app beyond local development. The Admin dashboard enrolls countries and creates matching country logins automatically, and provides market setup for resources, stockpiles, and import objectives.
+Change these passwords using any of the methods below before using the app beyond local development:
+- **CLI Command** (instant without wiping data):
+  ```powershell
+  .venv\Scripts\python -m app.change_password <username> <new_password>
+  # Example:
+  .venv\Scripts\python -m app.change_password admin my_new_password
+  ```
+- **Environment Variables** (in `.env` or Render settings):
+  Set `ADMIN_PASSWORD`, `TRADING_CENTER_PASSWORD`, and/or `RANKING_PASSWORD`. The app will automatically sync them on startup.
+
+The Admin dashboard enrolls countries and creates matching country logins automatically, and provides market setup for resources, stockpiles, and import objectives.
 
 ## Running in VS Code
 

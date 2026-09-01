@@ -44,12 +44,16 @@ async def lifespan(_app: FastAPI):
         db = SessionLocal()
         try:
             for username, password, role in DEFAULT_USERS:
-                if not db.query(User).filter(User.username == username).first():
+                existing = db.query(User).filter(User.username == username).first()
+                if not existing:
                     db.add(User(
                         username=username,
                         password_hash=hash_password(password),
                         role=role,
                     ))
+                elif os.getenv(f"{username.upper()}_PASSWORD"):
+                    # Update password if explicitly configured in environment
+                    existing.password_hash = hash_password(password)
             db.commit()
         except Exception:
             db.rollback()

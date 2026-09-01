@@ -1,0 +1,208 @@
+from decimal import Decimal
+from pydantic import BaseModel
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.database import get_db
+from app.core.auth import require_role
+
+from app.models.user import User
+from app.models.trade import Trade
+from app.models.round import Round
+from app.models.crisis import Crisis
+from app.models.country import Country
+from app.services.trade_service import execute_trade
+
+
+router = APIRouter(
+    prefix="/trading-center",
+    tags=["Trading Center"]
+)
+
+
+@router.get("/round")
+def get_active_round(
+    current_user: User = Depends(
+        require_role("trading_center")
+    ),
+    db: Session = Depends(get_db)
+):
+    active_round = db.query(Round).filter(
+        Round.is_active == True
+    ).first()
+
+    if not active_round:
+        return {
+            "detail": "No active round"
+        }
+
+    return active_round
+
+
+@router.get("/trades")
+def get_trades(
+    current_user: User = Depends(
+        require_role("trading_center")
+    ),
+    db: Session = Depends(get_db)
+):
+    return db.query(Trade).order_by(
+        Trade.id.desc()
+    ).all()
+
+
+@router.get("/dashboard")
+def get_trading_center_dashboard(
+    current_user: User = Depends(
+        require_role("trading_center")
+    ),
+    db: Session = Depends(get_db)
+):
+
+    # ---------------------------------------------------------
+    # ACTIVE ROUND
+    # ---------------------------------------------------------
+
+    active_round = db.query(Round).filter(
+        Round.is_active == True
+    ).first()
+
+    round_data = None
+    crisis_data = []
+
+    if active_round:
+
+        round_data = {
+            "id": active_round.id,
+            "round_number": active_round.round_number
+        }
+
+        crises = db.query(Crisis).filter(
+            Crisis.round_id == active_round.id
+        ).all()
+
+        for crisis in crises:
+            crisis_data.append({
+                "id": crisis.id,
+                "resource_id": crisis.resource_id,
+                "value_modifier": crisis.value_modifier
+            })
+
+    # ---------------------------------------------------------
+    # PENDING TRADES
+    # ---------------------------------------------------------
+
+    pending_trades = db.query(Trade).filter(
+        Trade.status == "pending"
+    ).order_by(
+        Trade.id.asc()
+    ).all()
+
+    pending_trade_data = []
+
+    for trade in pending_trades:
+
+        import_country = db.get(
+            Country,
+            trade.import_country_id
+        )
+
+        export_country = db.get(
+            Country,
+            trade.export_country_id
+        )
+
+        pending_trade_data.append({
+            "id": trade.id,
+            "round_id": trade.round_id,
+            "import_country_id": trade.import_country_id,
+            "import_country_name": (
+                import_country.name
+                if import_country else None
+            ),
+            "export_country_id": trade.export_country_id,
+            "export_country_name": (
+                export_country.name
+                if export_country else None
+            ),
+            "resource_id": trade.resource_id,
+            "quantity": trade.quantity,
+            "price": trade.price,
+            "trade_type": trade.trade_type,
+            "payment_resource_id": trade.payment_resource_id,
+            "payment_quantity": trade.payment_quantity,
+            "status": trade.status
+        })
+
+    # ---------------------------------------------------------
+    # RECENT COMPLETED TRADES
+    # ---------------------------------------------------------
+
+    completed_trades = db.query(Trade).filter(
+        Trade.status == "completed"
+    ).order_by(
+        Trade.id.desc()
+    ).limit(20).all()
+
+    completed_trade_data = []
+
+    for trade in completed_trades:
+
+        completed_trade_data.append({
+            "id": trade.id,
+            "round_id": trade.round_id,
+            "import_country_id": trade.import_country_id,
+            "export_country_id": trade.export_country_id,
+            "resource_id": trade.resource_id,
+            "quantity": trade.quantity,
+            "price": trade.price,
+            "trade_type": trade.trade_type,
+            "status": trade.status
+        })
+
+    return {
+        "active_round": round_data,
+        "crises": crisis_data,
+        "pending_trades": pending_trade_data,
+        "recent_completed_trades": completed_trade_data
+    }
+
+
+class DirectTradeCreate(BaseModel):
+    round_id: int
+    export_country_id: int
+    import_country_id: int
+    resource_id: int
+    quantity: int
+    price: Decimal = Decimal("0")
+    trade_type: str = "money"
+    payment_resource_id: int | None = None
+    payment_quantity: int | None = None
+
+
+@router.post("/execute-trade")
+def execute_direct_trade(
+    data: DirectTradeCreate,
+    current_user: User = Depends(
+        require_role("trading_center")
+    ),
+    db: Session = Depends(get_db)
+):
+    trade = execute_trade(
+        db=db,
+        round_id=data.round_id,
+        import_country_id=data.import_country_id,
+        export_country_id=data.export_country_id,
+        resource_id=data.resource_id,
+        quantity=data.quantity,
+        price=data.price,
+        trade_type=data.trade_type,
+        payment_resource_id=data.payment_resource_id,
+        payment_quantity=data.payment_quantity,
+    )
+
+    return {
+        "message": "Trade successfully executed",
+        "trade_id": trade.id,
+        "status": trade.status
+    }

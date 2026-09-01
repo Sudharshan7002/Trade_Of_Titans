@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { border-color: rgba(254, 210, 85, 0.16); }
+  
+  body {
+    margin: 0;
+    background: #1E2328;
+    color: #FED255;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: #2A2F35;
+    border: 1px solid rgba(245, 180, 2, 0.24);
+  }
+  
+  .glass-panel-hover {
+    transition: border-color 160ms ease, background 160ms ease;
+  }
+  
+  .glass-panel-hover:hover {
+    background: #3B4046;
+    border-color: #F6A403;
+  }
+
+  .glass-card {
+    background: #2A2F35;
+    border: 1px solid rgba(245, 180, 2, 0.24);
+  }
+
+  .glass-input {
+    background: #1E2328;
+    border: 1px solid rgba(245, 180, 2, 0.42);
+    transition: all 0.15s ease-in-out;
+  }
+  
+  .glass-input:focus {
+    border-color: #F6A403;
+    box-shadow: 0 0 0 2px rgba(246, 164, 3, 0.28);
+    outline: none;
+  }
+
+  .subtle-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .subtle-scrollbar::-webkit-scrollbar-track {
+    background: #1E2328;
+  }
+  
+  .subtle-scrollbar::-webkit-scrollbar-thumb {
+    background: #F6A403;
+    border-radius: 9999px;
+  }
+  
+  .subtle-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #FED255;
+  }
+}

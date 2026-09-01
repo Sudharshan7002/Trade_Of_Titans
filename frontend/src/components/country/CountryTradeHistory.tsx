@@ -17,10 +17,10 @@ export const CountryTradeHistory: React.FC<CountryTradeHistoryProps> = ({
 
   if (!trades || trades.length === 0) {
     return (
-      <div className="p-8 text-center bg-white dark:bg-titan-900 rounded-2xl border border-slate-200 dark:border-white/10 space-y-2">
-        <History className="w-10 h-10 text-slate-400 mx-auto" />
-        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">No Recorded Trade Orders</p>
-        <p className="text-xs text-slate-500 max-w-sm mx-auto">
+      <div className="p-8 text-center bg-white dark:bg-[#111111] rounded-2xl border border-neutral-200 dark:border-white/10 space-y-2">
+        <History className="w-10 h-10 text-neutral-400 mx-auto" />
+        <p className="text-sm font-display font-bold text-black dark:text-white">No Recorded Trade Orders</p>
+        <p className="text-xs text-neutral-500 max-w-sm mx-auto">
           Your state has not engaged in any commercial agreements yet. Orders will appear here once executed.
         </p>
       </div>
@@ -31,7 +31,7 @@ export const CountryTradeHistory: React.FC<CountryTradeHistoryProps> = ({
     <div className="overflow-x-auto subtle-scrollbar">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-slate-200 dark:border-white/10 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <tr className="border-b border-neutral-200 dark:border-white/10 text-[11px] font-mono font-bold uppercase tracking-wider text-neutral-500">
             <th className="py-3 px-4">Trade ID</th>
             <th className="py-3 px-4">Vector</th>
             <th className="py-3 px-4">Round</th>
@@ -41,7 +41,7 @@ export const CountryTradeHistory: React.FC<CountryTradeHistoryProps> = ({
             <th className="py-3 px-4 text-right">Status</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 dark:divide-white/5 text-xs">
+        <tbody className="divide-y divide-neutral-100 dark:divide-white/5 text-xs">
           {trades.map((trade) => {
             const isImporter = trade.import_country_id === myCountryId;
             const counterpartyId = isImporter ? trade.export_country_id : trade.import_country_id;
@@ -49,48 +49,48 @@ export const CountryTradeHistory: React.FC<CountryTradeHistoryProps> = ({
             const resourceName = getResourceName(trade.resource_id);
 
             return (
-              <tr key={trade.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-                <td className="py-3.5 px-4 font-mono font-semibold text-slate-600 dark:text-slate-300">
+              <tr key={trade.id} className="hover:bg-neutral-50 dark:hover:bg-white/5 transition-colors">
+                <td className="py-3.5 px-4 font-mono font-semibold text-neutral-500 dark:text-neutral-400">
                   #{trade.id}
                 </td>
                 <td className="py-3.5 px-4">
                   {isImporter ? (
-                    <span className="inline-flex items-center gap-1 font-bold text-sky-700 dark:text-cyan-400 bg-sky-50 dark:bg-cyan-500/10 px-2 py-0.5 rounded-md border border-sky-200 dark:border-cyan-500/20">
+                    <span className="inline-flex items-center gap-1 font-display font-bold text-black dark:text-[#CCFF00] bg-[#CCFF00]/15 px-2.5 py-0.5 rounded-lg border border-[#CCFF00]/40 text-xs">
                       <ArrowDownLeft className="w-3.5 h-3.5" />
                       IMPORT
                     </span>
                   ) : (
-                    <span className="inline-flex items-center gap-1 font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-500/20">
+                    <span className="inline-flex items-center gap-1 font-display font-bold text-white bg-[#FF5533] px-2.5 py-0.5 rounded-lg text-xs">
                       <ArrowUpRight className="w-3.5 h-3.5" />
                       EXPORT
                     </span>
                   )}
                 </td>
-                <td className="py-3.5 px-4 font-mono font-bold text-slate-900 dark:text-white">
+                <td className="py-3.5 px-4 font-mono font-bold text-black dark:text-white">
                   Round #{trade.round_id}
                 </td>
-                <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white">
+                <td className="py-3.5 px-4 font-display font-bold text-black dark:text-white">
                   {counterpartyName}
                 </td>
-                <td className="py-3.5 px-4 font-mono text-slate-800 dark:text-slate-200">
+                <td className="py-3.5 px-4 font-mono text-neutral-800 dark:text-neutral-200">
                   <div className="flex items-center gap-1.5">
-                    <Package className="w-3.5 h-3.5 text-slate-400" />
+                    <Package className="w-3.5 h-3.5 text-neutral-400" />
                     <span>{trade.quantity.toLocaleString()} u {resourceName}</span>
                   </div>
                 </td>
-                <td className="py-3.5 px-4 font-mono font-semibold text-slate-800 dark:text-slate-200">
+                <td className="py-3.5 px-4 font-mono font-semibold text-neutral-800 dark:text-neutral-200">
                   {trade.trade_type === 'money' ? (
-                    <div className="flex items-center gap-1 text-amber-600 dark:text-amber-300">
+                    <div className="flex items-center gap-1 text-black dark:text-[#CCFF00] font-bold">
                       <DollarSign className="w-3.5 h-3.5" />
                       <span>
                         {(Number(trade.price) * trade.quantity).toFixed(2)}{' '}
-                        <span className="text-[10px] text-slate-400">
+                        <span className="text-[10px] text-neutral-500 font-normal">
                           (${Number(trade.price).toFixed(2)}/u)
                         </span>
                       </span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1 text-purple-300 font-mono font-semibold">
+                    <div className="flex items-center gap-1 text-[#FF5533] font-bold">
                       <Package className="w-3.5 h-3.5" />
                       <span>
                         {trade.payment_quantity}{' '}

@@ -5,31 +5,44 @@ export default {
   theme: {
     extend: {
       colors: {
-        // True pitch black dark mode (NO blue / navy)
+        // Map titan directly to true pitch black so old references never render white in dark mode
+        titan: {
+          950: '#000000',
+          900: '#0A0A0A',
+          850: '#111111',
+          800: '#171717',
+          700: '#262626',
+          600: '#404040',
+          500: '#737373',
+          400: '#A3A3A3',
+          300: '#D4D4D4',
+          200: '#E5E5E5',
+          100: '#F5F5F5',
+          50: '#FAFAFA',
+        },
         pitch: {
           950: '#000000', // Canvas
           900: '#080808', // Elevated background
           850: '#0F0F0F', // Card surface
           800: '#171717', // Hover state
           700: '#262626', // Borders
-          600: '#404040', // Muted borders
-          500: '#737373', // Secondary text
-          400: '#A3A3A3', // Body text
+          600: '#404040',
+          500: '#737373',
+          400: '#A3A3A3',
           300: '#D4D4D4',
           100: '#F5F5F5',
           50: '#FFFFFF',
         },
-        // Electric vibrant accents directly from Image 1 & 2
+        // Electric vibrant accents from Image 1 & 2
         electric: {
           lime: '#CCFF00',      // WizardZ highlight (Image 1)
           'lime-dark': '#A3CC00',
           coral: '#FF5533',     // Reference 2 accent
           'coral-dark': '#E03D1B',
-          violet: '#B026FF',    // High-voltage purple
-          gold: '#FFD000',      // Golden podium
+          violet: '#B026FF',
+          gold: '#FFD000',
           amber: '#FF9900',
         },
-        // Pastel bento colors for light mode (Image 3)
         bento: {
           cream: '#FFF7ED',
           peach: '#FFEEDB',

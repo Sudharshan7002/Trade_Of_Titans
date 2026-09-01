@@ -4,7 +4,6 @@ import { useToast } from '../context/ToastContext';
 import { adminApi } from '../api/admin';
 import { AdminDashboardData } from '../types/api';
 import { StatCard } from '../components/ui/StatCard';
-import { GlassCard } from '../components/ui/GlassCard';
 import { StatusBadge } from '../components/ui/StatusBadge';
 import { Skeleton } from '../components/ui/Skeleton';
 import { GameControlPanel } from '../components/admin/GameControlPanel';
@@ -17,7 +16,8 @@ import {
   Building2, 
   RefreshCw, 
   Layers, 
-  ArrowLeftRight
+  ArrowLeftRight,
+  Flame
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -147,22 +147,32 @@ export const AdminDashboard: React.FC = () => {
         />
       </div>
 
-      {/* Tournament Lifecycle Controller (Start Game / End Game) */}
-      <GameControlPanel onStateChanged={fetchDashboard} />
+      {/* Main Operations & Roster Center: Asymmetric Two-Column Format */}
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+        {/* Left Column (5 of 12 cols): Operations, Timeline & Volatility Command */}
+        <div className="xl:col-span-5 space-y-8">
+          {/* Tournament Lifecycle Controller (Start Game / End Game) */}
+          <GameControlPanel onStateChanged={fetchDashboard} />
 
-      {/* Round Management Orchestrator */}
-      <RoundManager onRoundAction={fetchDashboard} />
+          {/* Round Management Orchestrator */}
+          <RoundManager onRoundAction={fetchDashboard} />
 
-      {/* Crisis Market Volatility Injector */}
-      <CrisisInjector crises={crises} onCrisisInjected={fetchDashboard} />
+          {/* Crisis Market Volatility Injector */}
+          <CrisisInjector crises={crises} onCrisisInjected={fetchDashboard} />
+        </div>
 
-      {/* Sovereign Country Roster & Balances */}
-      <CountryManager
-        countries={countries as any}
-        onCountryUpdated={fetchDashboard}
-      />
+        {/* Right Column (7 of 12 cols): Sovereign Roster Table & Market Setup */}
+        <div className="xl:col-span-7 space-y-8">
+          {/* Sovereign Country Roster & Balances */}
+          <CountryManager
+            countries={countries as any}
+            onCountryUpdated={fetchDashboard}
+          />
 
-      <MarketSetup />
+          {/* Commodity Catalog, Stockpile Allocator & Objectives */}
+          <MarketSetup />
+        </div>
+      </div>
     </div>
   );
 };

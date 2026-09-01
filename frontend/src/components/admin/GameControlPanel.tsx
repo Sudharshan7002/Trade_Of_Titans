@@ -68,29 +68,29 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = ({ onStateChang
 
   return (
     <>
-      <div className="p-6 rounded-3xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 shadow-soft-card space-y-5">
-        <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#111111] border border-neutral-200/90 dark:border-white/10 shadow-sm space-y-5">
+        <div className="flex items-center justify-between flex-wrap gap-3 border-b border-neutral-100 dark:border-white/10 pb-4">
           <div>
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
-              Global Lifecycle Command
+            <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+              // Global Lifecycle Command
             </span>
-            <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white mt-0.5">
-              Tournament Master Controls
+            <h3 className="font-display font-black text-2xl text-black dark:text-white mt-0.5">
+              Tournament <span className="text-[#FF5533] dark:text-[#CCFF00]">Master Controls</span>
             </h3>
           </div>
 
           <div>
             {gameStatus?.is_finished ? (
-              <span className="px-3.5 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/40">
+              <span className="px-3 py-1 rounded-full text-xs font-display font-bold uppercase tracking-wider bg-[#FF5533] text-white shadow-sm">
                 Tournament Concluded
               </span>
             ) : gameStatus?.is_started ? (
-              <span className="px-3.5 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="px-3 py-1 rounded-full text-xs font-display font-bold uppercase tracking-wider bg-[#CCFF00] text-black shadow-sm flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
                 Tournament Active
               </span>
             ) : (
-              <span className="px-3.5 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+              <span className="px-3 py-1 rounded-full text-xs font-display font-bold uppercase tracking-wider bg-neutral-200 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-300">
                 Not Started
               </span>
             )}
@@ -99,21 +99,21 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = ({ onStateChang
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Start Game Action */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-titan-950/60 border border-slate-200/80 dark:border-white/5 space-y-3 flex flex-col justify-between shadow-sm">
+          <div className="p-5 rounded-2xl bg-neutral-50 dark:bg-[#181818] border border-neutral-200/90 dark:border-white/10 space-y-3 flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-white">
-                <Play className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Initialize / Start Game</span>
+              <div className="flex items-center gap-2 font-display font-bold text-sm text-black dark:text-white">
+                <Play className="w-4 h-4 text-black dark:text-[#CCFF00] fill-current" />
+                <span>Initialize / Start Tournament</span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                Activates the game session, allowing round controllers and national delegates to initiate trades.
+              <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 leading-relaxed">
+                Activates the session, allowing round controllers and national delegates to initiate trades.
               </p>
             </div>
 
             <button
               onClick={gameStatus?.is_finished ? () => setIsConfirmResetOpen(true) : handleStartGame}
               disabled={isStarting || isResetting || gameStatus?.is_started}
-              className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+              className="w-full py-3 px-4 rounded-xl bg-black hover:bg-neutral-800 dark:bg-[#CCFF00] dark:hover:bg-[#B8E600] text-white dark:text-black font-display font-extrabold text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
             >
               {isStarting || isResetting ? (
                 <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -125,26 +125,26 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = ({ onStateChang
           </div>
 
           {/* End Game Action */}
-          <div className="p-4 rounded-2xl bg-rose-50/40 dark:bg-titan-950/60 border border-rose-200 dark:border-rose-500/20 space-y-3 flex flex-col justify-between shadow-sm">
+          <div className="p-5 rounded-2xl bg-neutral-50 dark:bg-[#181818] border border-neutral-200/90 dark:border-white/10 space-y-3 flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-2 font-bold text-sm text-rose-800 dark:text-rose-300">
-                <Square className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+              <div className="flex items-center gap-2 font-display font-bold text-sm text-[#FF5533]">
+                <Square className="w-4 h-4 text-[#FF5533] fill-current" />
                 <span>Conclude & Finalize Rankings</span>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                Permanently closes the game, calculates final scores & standings, and generates the podium. Requires all rounds to be ended first.
+              <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-1 leading-relaxed">
+                Permanently closes the tournament, calculates final scores, and generates the podium.
               </p>
             </div>
 
             <button
               onClick={() => setIsConfirmEndOpen(true)}
               disabled={isEnding || !gameStatus?.is_started || gameStatus?.is_finished || !!activeRound}
-              className="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+              className="w-full py-3 px-4 rounded-xl bg-[#FF5533] hover:bg-[#E03D1B] text-white font-display font-extrabold text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
             >
               {isEnding ? (
                 <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : (
-                <Square className="w-4 h-4" />
+                <Square className="w-4 h-4 fill-current" />
               )}
               <span>{activeRound ? 'Cannot End (Active Round)' : 'Conclude & Finalize'}</span>
             </button>
@@ -152,8 +152,8 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = ({ onStateChang
         </div>
 
         {activeRound && (
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-2.5 text-xs text-amber-300">
-            <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+          <div className="p-3.5 rounded-2xl bg-[#FF5533]/15 border border-[#FF5533]/40 flex items-center gap-2.5 text-xs text-[#FF5533]">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>
               Round #{activeRound.round_number} is currently active. End the active round before concluding the tournament.
             </span>
@@ -161,24 +161,27 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = ({ onStateChang
         )}
       </div>
 
+      {/* Confirmation Dialog for Concluding Tournament */}
       <ConfirmDialog
         isOpen={isConfirmEndOpen}
         onClose={() => setIsConfirmEndOpen(false)}
         onConfirm={handleEndGame}
-        title="DANGER: Conclude Tournament & Finalize Rankings"
-        message="Are you certain you wish to end the game? This will calculate all country scores (wealth, import objective bonuses, trade bonuses and penalties) and write the immutable Final Rankings to the database."
-        confirmLabel="END GAME PERMANENTLY"
+        title="Conclude Tournament & Generate Final Rankings"
+        message="This action will permanently lock the tournament, conclude all trade transactions, and compute the official sovereign leaderboard. Are you sure you wish to finalize the competition?"
+        confirmLabel="Finalize & Lock Tournament"
         isDangerous={true}
         isLoading={isEnding}
       />
+
+      {/* Confirmation Dialog for Resetting Tournament */}
       <ConfirmDialog
         isOpen={isConfirmResetOpen}
         onClose={() => setIsConfirmResetOpen(false)}
         onConfirm={handleResetGame}
-        title="Prepare a New Tournament?"
-        message="This reopens the game and deletes final rankings from the concluded tournament. Countries, resources, inventories, and rounds are retained."
-        confirmLabel="RESET TO STANDBY"
-        isDangerous
+        title="Prepare New Tournament"
+        message="This will reset game state back to standby mode so you can start a new tournament. Existing country rosters and resources are preserved."
+        confirmLabel="Reset to Standby"
+        isDangerous={false}
         isLoading={isResetting}
       />
     </>

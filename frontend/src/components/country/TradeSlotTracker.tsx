@@ -16,45 +16,45 @@ export const TradeSlotTracker: React.FC<TradeSlotTrackerProps> = ({
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {/* Import Slot */}
       <div
-        className={`p-4 rounded-2xl border transition-all duration-300 ${
+        className={`p-5 rounded-2xl border transition-all duration-300 ${
           !isRoundActive
-            ? 'bg-slate-900/40 border-white/5 opacity-60'
+            ? 'bg-neutral-100 dark:bg-neutral-900/40 border-neutral-200 dark:border-white/5 opacity-60'
             : hasUsedImport
-            ? 'bg-titan-900/80 border-amber-500/30'
-            : 'bg-titan-900/80 border-cyan-500/40 shadow-glow-cyan/10'
+            ? 'bg-neutral-50 dark:bg-[#181818] border-[#FF5533]/40'
+            : 'bg-white dark:bg-[#111111] border-neutral-200 dark:border-[#CCFF00]/40 shadow-sm'
         }`}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <div
-              className={`p-2 rounded-xl border ${
+              className={`p-2.5 rounded-xl border ${
                 hasUsedImport
-                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
-                  : 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400'
+                  ? 'bg-[#FF5533]/15 border-[#FF5533]/40 text-[#FF5533]'
+                  : 'bg-black text-[#CCFF00] dark:bg-[#CCFF00] dark:text-black border-transparent'
               }`}
             >
               <ArrowDownLeft className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-neutral-500">
                 Round Import Slot
               </span>
-              <div className="text-sm font-bold text-white">
+              <div className="text-sm font-display font-bold text-black dark:text-white">
                 {hasUsedImport ? 'Quota Utilized' : 'Slot Available'}
               </div>
             </div>
           </div>
           {hasUsedImport ? (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+            <span className="flex items-center gap-1 text-[11px] font-mono font-bold text-white bg-[#FF5533] px-2.5 py-0.5 rounded-full">
               1 / 1 USED
             </span>
           ) : (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded-full border border-cyan-500/20">
+            <span className="flex items-center gap-1 text-[11px] font-mono font-bold text-black bg-[#CCFF00] px-2.5 py-0.5 rounded-full">
               0 / 1 READY
             </span>
           )}
         </div>
-        <p className="text-[11px] text-slate-400 mt-2">
+        <p className="text-xs text-neutral-500 mt-2.5">
           {hasUsedImport
             ? 'Your country has already submitted or completed an import this round.'
             : 'You may import resources from any sovereign partner.'}
@@ -63,48 +63,48 @@ export const TradeSlotTracker: React.FC<TradeSlotTrackerProps> = ({
 
       {/* Export Slot */}
       <div
-        className={`p-4 rounded-2xl border transition-all duration-300 ${
+        className={`p-5 rounded-2xl border transition-all duration-300 ${
           !isRoundActive
-            ? 'bg-slate-900/40 border-white/5 opacity-60'
+            ? 'bg-neutral-100 dark:bg-neutral-900/40 border-neutral-200 dark:border-white/5 opacity-60'
             : hasUsedExport
-            ? 'bg-titan-900/80 border-amber-500/30'
-            : 'bg-titan-900/80 border-emerald-500/40 shadow-glow-emerald/10'
+            ? 'bg-neutral-50 dark:bg-[#181818] border-[#FF5533]/40'
+            : 'bg-white dark:bg-[#111111] border-neutral-200 dark:border-[#CCFF00]/40 shadow-sm'
         }`}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <div
-              className={`p-2 rounded-xl border ${
+              className={`p-2.5 rounded-xl border ${
                 hasUsedExport
-                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400'
-                  : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                  ? 'bg-[#FF5533]/15 border-[#FF5533]/40 text-[#FF5533]'
+                  : 'bg-black text-[#CCFF00] dark:bg-[#CCFF00] dark:text-black border-transparent'
               }`}
             >
               <ArrowUpRight className="w-4 h-4" />
             </div>
             <div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-neutral-500">
                 Round Export Slot
               </span>
-              <div className="text-sm font-bold text-white">
+              <div className="text-sm font-display font-bold text-black dark:text-white">
                 {hasUsedExport ? 'Quota Utilized' : 'Slot Available'}
               </div>
             </div>
           </div>
           {hasUsedExport ? (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+            <span className="flex items-center gap-1 text-[11px] font-mono font-bold text-white bg-[#FF5533] px-2.5 py-0.5 rounded-full">
               1 / 1 USED
             </span>
           ) : (
-            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+            <span className="flex items-center gap-1 text-[11px] font-mono font-bold text-black bg-[#CCFF00] px-2.5 py-0.5 rounded-full">
               0 / 1 READY
             </span>
           )}
         </div>
-        <p className="text-[11px] text-slate-400 mt-2">
+        <p className="text-xs text-neutral-500 mt-2.5">
           {hasUsedExport
-            ? 'Your country has already submitted or completed an export this round.'
-            : 'You may export surplus resources for money or barter goods.'}
+            ? 'Your country has already fulfilled its outbound export allocation.'
+            : 'You may export resources to any sovereign buyer.'}
         </p>
       </div>
     </div>

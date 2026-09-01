@@ -8,7 +8,7 @@ export const RootRedirect: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-titan-950 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#F0F2F5] dark:bg-[#000000] flex items-center justify-center p-6">
         <div className="w-full max-w-md space-y-4">
           <Skeleton variant="card" />
         </div>

@@ -1,17 +1,20 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
-export interface ToastItem {
+export interface ToastMessage {
   id: string;
   type: ToastType;
   title: string;
   message?: string;
+  duration?: number;
 }
 
 interface ToastContextType {
-  toast: (type: ToastType, title: string, message?: string) => void;
+  toasts: ToastMessage[];
+  addToast: (type: ToastType, title: string, message?: string, duration?: number) => void;
+  removeToast: (id: string) => void;
   success: (title: string, message?: string) => void;
   error: (title: string, message?: string) => void;
   warning: (title: string, message?: string) => void;
@@ -20,25 +23,33 @@ interface ToastContextType {
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
-export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
+export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const addToast = useCallback((type: ToastType, title: string, message?: string) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    const newToast: ToastItem = { id, type, title, message };
-    setToasts((prev) => [...prev, newToast]);
+  const addToast = useCallback(
+    (type: ToastType, title: string, message?: string, duration = 5000) => {
+      const id = Math.random().toString(36).substring(2, 9);
+      const newToast: ToastMessage = { id, type, title, message, duration };
 
-    setTimeout(() => {
-      removeToast(id);
-    }, 4500);
-  }, [removeToast]);
+      setToasts((prev) => [...prev, newToast]);
+
+      if (duration > 0) {
+        setTimeout(() => {
+          removeToast(id);
+        }, duration);
+      }
+    },
+    [removeToast]
+  );
 
   const value: ToastContextType = {
-    toast: addToast,
+    toasts,
+    addToast,
+    removeToast,
     success: (title, msg) => addToast('success', title, msg),
     error: (title, msg) => addToast('error', title, msg),
     warning: (title, msg) => addToast('warning', title, msg),
@@ -51,33 +62,33 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       {/* Toast Render Overlay */}
       <div className="fixed bottom-5 right-5 z-50 flex flex-col space-y-3 max-w-md w-full pointer-events-none px-4 sm:px-0">
         {toasts.map((t) => {
-          let bgClass = 'bg-titan-900/90 border-cyan-500/30 text-cyan-200';
-          let icon = <Info className="w-5 h-5 text-cyan-400 shrink-0" />;
+          let bgClass = 'bg-[#111111] border-neutral-700 text-white';
+          let icon = <Info className="w-5 h-5 text-neutral-400 shrink-0" />;
 
           if (t.type === 'success') {
-            bgClass = 'bg-titan-900/95 border-emerald-500/40 text-emerald-100 shadow-glow-emerald';
-            icon = <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />;
+            bgClass = 'bg-[#111111] border-[#CCFF00]/50 text-white shadow-[0_0_20px_rgba(204,255,0,0.2)]';
+            icon = <CheckCircle2 className="w-5 h-5 text-[#CCFF00] shrink-0" />;
           } else if (t.type === 'error') {
-            bgClass = 'bg-titan-900/95 border-rose-500/40 text-rose-100 shadow-glow-crimson';
-            icon = <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />;
+            bgClass = 'bg-[#111111] border-[#FF5533]/50 text-white shadow-[0_0_20px_rgba(255,85,51,0.2)]';
+            icon = <AlertCircle className="w-5 h-5 text-[#FF5533] shrink-0" />;
           } else if (t.type === 'warning') {
-            bgClass = 'bg-titan-900/95 border-amber-500/40 text-amber-100 shadow-glow-gold';
-            icon = <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />;
+            bgClass = 'bg-[#111111] border-[#FFD000]/50 text-white shadow-[0_0_20px_rgba(255,208,0,0.2)]';
+            icon = <AlertTriangle className="w-5 h-5 text-[#FFD000] shrink-0" />;
           }
 
           return (
             <div
               key={t.id}
-              className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl border backdrop-blur-xl transition-all duration-300 transform translate-y-0 animate-float ${bgClass}`}
+              className={`pointer-events-auto flex items-start gap-3 p-4 rounded-2xl border backdrop-blur-2xl transition-all duration-300 transform translate-y-0 shadow-xl ${bgClass}`}
             >
               {icon}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold leading-tight text-white">{t.title}</p>
-                {t.message && <p className="text-xs mt-1 text-slate-300 leading-normal">{t.message}</p>}
+                <p className="text-sm font-display font-bold leading-tight text-white">{t.title}</p>
+                {t.message && <p className="text-xs mt-1 text-neutral-400 leading-normal">{t.message}</p>}
               </div>
               <button
                 onClick={() => removeToast(t.id)}
-                className="text-slate-400 hover:text-white transition-colors shrink-0 p-1"
+                className="text-neutral-500 hover:text-white transition-colors shrink-0 p-1"
                 aria-label="Close notification"
               >
                 <X className="w-4 h-4" />

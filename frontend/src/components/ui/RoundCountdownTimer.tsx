@@ -47,8 +47,8 @@ export const RoundCountdownTimer: React.FC<RoundCountdownTimerProps> = ({
     }
 
     return (
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-titan-950/70 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 text-xs font-mono">
-        <PlayCircle className="w-4 h-4 text-slate-500" />
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-neutral-100 dark:bg-[#0A0A0A] border border-neutral-200 dark:border-white/10 text-neutral-600 dark:text-neutral-400 text-xs font-mono">
+        <PlayCircle className="w-4 h-4 text-neutral-500" />
         <span>Round #{round?.round_number || 1} &bull; Standing By</span>
       </div>
     );

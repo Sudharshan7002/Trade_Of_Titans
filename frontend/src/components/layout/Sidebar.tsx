@@ -2,10 +2,10 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
-  Building2, 
-  ArrowLeftRight, 
   ShieldCheck, 
-  Trophy,
+  ArrowLeftRight, 
+  Trophy, 
+  Building2 
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
@@ -16,12 +16,21 @@ export const Sidebar: React.FC = () => {
       return [
         {
           to: '/admin',
-          label: 'Supreme Control',
+          label: 'Tournament Admin',
           icon: <ShieldCheck className="w-4 h-4" />,
+        },
+        {
+          to: '/trading-center',
+          label: 'Trading Floor',
+          icon: <ArrowLeftRight className="w-4 h-4" />,
+        },
+        {
+          to: '/rankings',
+          label: 'Leaderboard',
+          icon: <Trophy className="w-4 h-4" />,
         },
       ];
     }
-
     if (role === 'trading_center') {
       return [
         {
@@ -29,19 +38,22 @@ export const Sidebar: React.FC = () => {
           label: 'Trading Floor',
           icon: <ArrowLeftRight className="w-4 h-4" />,
         },
-      ];
-    }
-
-    if (role === 'ranking') {
-      return [
         {
           to: '/rankings',
-          label: 'Global Standings',
+          label: 'Leaderboard',
           icon: <Trophy className="w-4 h-4" />,
         },
       ];
     }
-
+    if (role === 'ranking') {
+      return [
+        {
+          to: '/rankings',
+          label: 'Leaderboard',
+          icon: <Trophy className="w-4 h-4" />,
+        },
+      ];
+    }
     // country role
     return [
       {
@@ -55,17 +67,17 @@ export const Sidebar: React.FC = () => {
   const navLinks = getNavLinks();
 
   return (
-    <aside className="w-full md:w-56 shrink-0 md:min-h-[calc(100vh-4rem)] border-b md:border-b-0 md:border-r border-slate-200/80 dark:border-white/10 bg-white dark:bg-titan-950 p-4 transition-colors">
+    <aside className="w-full md:w-56 shrink-0 md:min-h-[calc(100vh-4rem)] border-b md:border-b-0 md:border-r border-neutral-200/80 dark:border-white/10 bg-white dark:bg-[#080808] p-4 transition-colors">
       <nav className="flex flex-row md:flex-col gap-1.5 overflow-x-auto pb-2 md:pb-0 subtle-scrollbar">
         {navLinks.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
+              `flex items-center gap-3 px-4 py-2.5 rounded-2xl text-xs font-display font-bold uppercase tracking-wider transition-all whitespace-nowrap ${
                 isActive
-                  ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5'
+                  ? 'bg-black text-[#CCFF00] dark:bg-[#CCFF00] dark:text-black shadow-sm'
+                  : 'text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-white/5'
               }`
             }
           >

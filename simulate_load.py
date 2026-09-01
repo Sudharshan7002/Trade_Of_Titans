@@ -15,12 +15,14 @@ SERVER_URL = os.getenv("SERVER_URL", "http://127.0.0.1:8000")
 if len(sys.argv) > 1 and sys.argv[1].startswith("http"):
     SERVER_URL = sys.argv[1].rstrip("/")
 
-DURATION_SECONDS = 25  # Simulation duration
+ADMIN_PASS = os.getenv("ADMIN_PASSWORD", "admin123")
+TC_PASS = os.getenv("TRADING_CENTER_PASSWORD", "trading123")
+RANKING_PASS = os.getenv("RANKING_PASSWORD", "ranking123")
 
 VIRTUAL_USERS = [
-    {"username": "admin", "password": "admin123", "role": "admin"},
-    {"username": "trading_center", "password": "trading123", "role": "trading_center"},
-    {"username": "ranking", "password": "ranking123", "role": "ranking"},
+    {"username": "admin", "password": ADMIN_PASS, "role": "admin"},
+    {"username": "trading_center", "password": TC_PASS, "role": "trading_center"},
+    {"username": "ranking", "password": RANKING_PASS, "role": "ranking"},
     {"username": "usa", "password": "usa123", "role": "country"},
     {"username": "germany", "password": "germany123", "role": "country"},
     {"username": "canada", "password": "canada123", "role": "country"},

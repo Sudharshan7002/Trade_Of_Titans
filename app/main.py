@@ -42,7 +42,13 @@ async def lifespan(_app: FastAPI):
         Base.metadata.create_all(bind=engine)
 
         db = SessionLocal()
-        try:
+        # Auto-seed full tournament if database has 0 countries (e.g. fresh Supabase deployment)
+        from app.models.country import Country
+        if db.query(Country).count() == 0:
+            from app.seed_tournament import seed_tournament
+            print("Fresh database detected: Bootstrapping official tournament data...")
+            seed_tournament()
+        else:
             for username, password, role in DEFAULT_USERS:
                 existing = db.query(User).filter(User.username == username).first()
                 if not existing:
@@ -55,12 +61,11 @@ async def lifespan(_app: FastAPI):
                     # Update password if explicitly configured in environment
                     existing.password_hash = hash_password(password)
             db.commit()
-        except Exception:
-            db.rollback()
-        finally:
-            db.close()
+        db.commit()
     except Exception as e:
         print(f"Database bootstrap notice: {e}")
+    finally:
+        db.close()
     yield
 
 

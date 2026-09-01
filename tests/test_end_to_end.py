@@ -15,13 +15,9 @@ def token_for(client: TestClient, username: str, password: str) -> dict[str, str
 
 def test_admin_country_trade_confirmation_flow():
     Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
-    db.add(User(username="admin", password_hash=hash_password("admin-password"), role="admin"))
-    db.commit()
-    db.close()
 
     with TestClient(app) as client:
-        admin_headers = token_for(client, "admin", "admin-password")
+        admin_headers = token_for(client, "admin", "admin123")
         assert client.post("/game/start", headers=admin_headers).status_code == 200
 
         assert client.post("/game/end", headers=admin_headers).status_code == 200

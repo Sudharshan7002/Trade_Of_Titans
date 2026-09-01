@@ -15,9 +15,11 @@ SERVER_URL = os.getenv("SERVER_URL", "http://127.0.0.1:8000")
 if len(sys.argv) > 1 and sys.argv[1].startswith("http"):
     SERVER_URL = sys.argv[1].rstrip("/")
 
-ADMIN_PASS = os.getenv("ADMIN_PASSWORD", "admin123")
-TC_PASS = os.getenv("TRADING_CENTER_PASSWORD", "trading123")
-RANKING_PASS = os.getenv("RANKING_PASSWORD", "ranking123")
+DURATION_SECONDS = 35  # Simulation duration in seconds
+
+ADMIN_PASS = os.getenv("ADMIN_PASSWORD", "pordinno@123")
+TC_PASS = os.getenv("TRADING_CENTER_PASSWORD", "pordinno@123")
+RANKING_PASS = os.getenv("RANKING_PASSWORD", "pordinno@123")
 
 VIRTUAL_USERS = [
     {"username": "admin", "password": ADMIN_PASS, "role": "admin"},
@@ -51,7 +53,7 @@ async def login_user(client: httpx.AsyncClient, user: dict) -> str | None:
         res = await client.post(
             f"{SERVER_URL}/auth/login",
             json={"username": user["username"], "password": user["password"]},
-            timeout=10.0,
+            timeout=30.0,
         )
         latency = (time.perf_counter() - t0) * 1000
         latencies.append(latency)
@@ -64,16 +66,19 @@ async def login_user(client: httpx.AsyncClient, user: dict) -> str | None:
             return None
     except Exception as e:
         status_counts["error"] = status_counts.get("error", 0) + 1
-        print(f"Login error for {user['username']}: {e}")
+        print(f"Login error for {user['username']}: {repr(e)}")
         return None
 
 
-async def simulate_user(user: dict, stop_event: asyncio.Event):
+async def simulate_user(user: dict, index: int, stop_event: asyncio.Event):
     username = user["username"]
     role = user["role"]
     user_metrics[username] = {"requests": 0, "errors": 0, "latencies": []}
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
+    # Stagger logins realistically (real users log in over a few seconds)
+    await asyncio.sleep(index * 0.6)
+
+    async with httpx.AsyncClient(timeout=20.0) as client:
         token = await login_user(client, user)
         if not token:
             user_metrics[username]["errors"] += 1
@@ -124,7 +129,7 @@ async def run_simulation():
     print("================================================================\n")
 
     # First test server reachability
-    async with httpx.AsyncClient(timeout=5.0) as check_client:
+    async with httpx.AsyncClient(timeout=10.0) as check_client:
         try:
             r = await check_client.get(f"{SERVER_URL}/")
             if r.status_code != 200:
@@ -138,7 +143,7 @@ async def run_simulation():
     start_time = time.time()
 
     # Launch all 18 virtual user tasks concurrently
-    tasks = [simulate_user(user, stop_event) for user in VIRTUAL_USERS]
+    tasks = [simulate_user(user, i, stop_event) for i, user in enumerate(VIRTUAL_USERS)]
 
     print(f"Starting {len(VIRTUAL_USERS)} concurrent virtual user sessions...")
     sim_task = asyncio.gather(*tasks)

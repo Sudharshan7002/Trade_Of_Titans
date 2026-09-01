@@ -17,48 +17,48 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
 }) => {
   const normStatus = (status || '').toLowerCase();
 
-  let bgClass = 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700/60';
+  let bgClass = 'bg-neutral-100 dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 border-neutral-200 dark:border-white/10';
   let icon = <Clock className="w-3.5 h-3.5" />;
   let displayLabel = label || status;
 
   if (normStatus === 'completed' || normStatus === 'active' || normStatus === 'started') {
-    bgClass = 'bg-emerald-50 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/30 shadow-sm';
-    icon = <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />;
+    bgClass = 'bg-[#CCFF00] text-black border-[#A3CC00] shadow-[0_0_12px_rgba(204,255,0,0.35)]';
+    icon = <CheckCircle2 className="w-3.5 h-3.5 text-black" />;
     if (!label) displayLabel = normStatus === 'completed' ? 'Completed' : normStatus === 'active' ? 'Active' : 'Started';
   } else if (normStatus === 'pending') {
-    bgClass = 'bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/30 animate-pulse';
-    icon = <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />;
+    bgClass = 'bg-[#FFD000] text-black border-[#D4A700] animate-pulse shadow-[0_0_12px_rgba(255,208,0,0.3)]';
+    icon = <Clock className="w-3.5 h-3.5 text-black" />;
     if (!label) displayLabel = 'Pending Review';
   } else if (normStatus === 'rejected' || normStatus === 'failed' || normStatus === 'finished') {
-    bgClass = 'bg-rose-50 dark:bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-500/30';
-    icon = <XCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />;
+    bgClass = 'bg-[#FF5533] text-white border-[#E03D1B] shadow-[0_0_12px_rgba(255,85,51,0.3)]';
+    icon = <XCircle className="w-3.5 h-3.5 text-white" />;
     if (!label) displayLabel = normStatus === 'finished' ? 'Finished' : 'Failed';
   } else if (normStatus === 'inactive' || normStatus === 'not_started') {
-    bgClass = 'bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700/40';
-    icon = <AlertTriangle className="w-3.5 h-3.5 text-slate-500" />;
+    bgClass = 'bg-neutral-100 dark:bg-neutral-900 text-neutral-600 dark:text-neutral-400 border-neutral-200 dark:border-white/10';
+    icon = <AlertTriangle className="w-3.5 h-3.5 text-neutral-400" />;
     if (!label) displayLabel = normStatus === 'not_started' ? 'Not Started' : 'Inactive';
   } else if (normStatus === 'admin') {
-    bgClass = 'bg-purple-50 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-500/30 shadow-sm';
-    icon = <Shield className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />;
+    bgClass = 'bg-black text-[#CCFF00] dark:bg-white dark:text-black border-black/10 dark:border-white/20 shadow-sm';
+    icon = <Shield className="w-3.5 h-3.5" />;
     if (!label) displayLabel = 'Supreme Admin';
   } else if (normStatus === 'trading_center') {
-    bgClass = 'bg-sky-50 dark:bg-sky-500/15 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-500/30 shadow-sm';
-    icon = <Globe className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />;
-    if (!label) displayLabel = 'Trading Center';
+    bgClass = 'bg-black text-white dark:bg-white dark:text-black border-black/10 dark:border-white/20 shadow-sm';
+    icon = <Globe className="w-3.5 h-3.5" />;
+    if (!label) displayLabel = 'Trading Desk';
   } else if (normStatus === 'country') {
-    bgClass = 'bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-500/30 shadow-sm';
-    icon = <Globe className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />;
+    bgClass = 'bg-neutral-100 dark:bg-[#1A1A1A] text-black dark:text-[#CCFF00] border-neutral-300 dark:border-white/10 shadow-sm';
+    icon = <Globe className="w-3.5 h-3.5" />;
     if (!label) displayLabel = 'National Delegate';
   } else if (normStatus === 'ranking') {
-    bgClass = 'bg-amber-50 dark:bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/30 shadow-sm';
-    icon = <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />;
+    bgClass = 'bg-[#FFD000]/15 text-[#B38F00] dark:text-[#FFD000] border-[#FFD000]/30 shadow-sm';
+    icon = <CheckCircle2 className="w-3.5 h-3.5 text-[#FFD000]" />;
     if (!label) displayLabel = 'Rankings Desk';
   }
 
   const sizeClasses = {
-    sm: 'text-[11px] px-2 py-0.5 gap-1 font-mono font-bold',
-    md: 'text-xs px-2.5 py-1 gap-1.5 font-mono font-bold',
-    lg: 'text-sm px-3.5 py-1.5 gap-2 font-mono font-bold',
+    sm: 'text-[10px] px-2.5 py-0.5 gap-1 font-display font-bold',
+    md: 'text-xs px-3 py-1 gap-1.5 font-display font-bold',
+    lg: 'text-sm px-4 py-1.5 gap-2 font-display font-bold',
   };
 
   return (

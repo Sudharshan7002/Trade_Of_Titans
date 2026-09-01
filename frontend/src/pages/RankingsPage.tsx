@@ -38,7 +38,6 @@ export const RankingsPage: React.FC = () => {
           setFinalRankings(finalRes.value || []);
         }
       } else {
-        // If non-admin, countries list can be used for public standings overview
         const countries = await referenceApi.getCountries();
         const fallbackRankings: LiveRanking[] = countries
           .map((c) => ({
@@ -91,39 +90,39 @@ export const RankingsPage: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-200/80 dark:border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
-              Global Geopolitical Standings
+            <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+              // Global Standings
             </span>
             {isGameFinished ? (
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/40">
+              <span className="px-3 py-0.5 rounded-full text-[10px] font-display font-bold uppercase tracking-wider bg-[#FFD000] text-black shadow-sm">
                 Official Final Results
               </span>
             ) : (
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="px-3 py-0.5 rounded-full text-[10px] font-display font-bold uppercase tracking-wider bg-[#CCFF00] text-black shadow-sm flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-black animate-pulse" />
                 Live Standings
               </span>
             )}
           </div>
-          <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-950 dark:text-white mt-1">
-            Global Strategy Leaderboard
+          <h1 className="font-display font-black text-3xl sm:text-4xl text-black dark:text-white mt-1 uppercase tracking-tight">
+            Global Strategy <span className="text-[#FF5533] dark:text-[#CCFF00]">Leaderboard</span>
           </h1>
         </div>
 
         <div className="flex items-center gap-3">
           {/* Toggle between Live and Final if both available */}
           {finalRankings.length > 0 && (
-            <div className="flex rounded-xl bg-slate-100 dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 p-1">
+            <div className="flex rounded-2xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-white/10 p-1">
               <button
                 type="button"
                 onClick={() => setViewMode('final')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all ${
                   viewMode === 'final'
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+                    ? 'bg-black text-[#CCFF00] dark:bg-[#CCFF00] dark:text-black shadow-sm'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white'
                 }`}
               >
                 Final Ceremony
@@ -131,10 +130,10 @@ export const RankingsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setViewMode('live')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-display font-bold uppercase tracking-wider transition-all ${
                   viewMode === 'live'
-                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
+                    ? 'bg-black text-[#CCFF00] dark:bg-[#CCFF00] dark:text-black shadow-sm'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white'
                 }`}
               >
                 Live Metrics
@@ -145,31 +144,26 @@ export const RankingsPage: React.FC = () => {
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}
-            className="p-2.5 rounded-xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-semibold flex items-center gap-2 shadow-sm"
+            className="p-2.5 rounded-2xl bg-white dark:bg-[#111111] border border-neutral-200 dark:border-white/10 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all text-xs font-display font-bold flex items-center gap-2 shadow-sm"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-sky-500' : ''}`} />
-            <span className="hidden sm:inline">Refresh</span>
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#CCFF00]' : ''}`} />
+            <span>Sync Scores</span>
           </button>
         </div>
       </div>
 
-      {/* Top 3 Champion Podium */}
-      <PodiumTopThree
-        rankings={activeDisplayRankings}
-        isFinal={viewMode === 'final'}
-      />
+      {/* Podium Presentation for Top 3 */}
+      <PodiumTopThree rankings={activeDisplayRankings} isFinal={viewMode === 'final'} />
 
-      {/* Full Leaderboard Table */}
-      <div className="space-y-4 pt-4 border-t border-slate-200/80 dark:border-white/5">
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
-              Full Standings
-            </span>
-            <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
-              Sovereign State Placements ({activeDisplayRankings.length})
-            </h3>
-          </div>
+      {/* Full Rankings Table */}
+      <div className="space-y-4 pt-4">
+        <div>
+          <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+            // Full Classification
+          </span>
+          <h3 className="font-display font-bold text-2xl text-black dark:text-white">
+            Comprehensive <span className="text-[#FF5533] dark:text-[#CCFF00]">Roster</span>
+          </h3>
         </div>
 
         <GlassCard>

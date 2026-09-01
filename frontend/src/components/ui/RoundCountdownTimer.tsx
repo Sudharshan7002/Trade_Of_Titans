@@ -63,18 +63,18 @@ export const RoundCountdownTimer: React.FC<RoundCountdownTimerProps> = ({
   const isUrgent = secondsLeft <= 180 && !isCritical && !isExpired;
 
   // Visual Theme adapting to Light / Dark Mode
-  let containerStyle = 'bg-slate-100 dark:bg-cyan-500/10 border-slate-300 dark:border-cyan-500/30 text-slate-900 dark:text-cyan-300';
-  let clockColor = 'text-slate-700 dark:text-cyan-400';
+  let containerStyle = 'bg-neutral-100 dark:bg-[#CCFF00]/10 border-neutral-300 dark:border-[#CCFF00]/30 text-black dark:text-[#CCFF00]';
+  let clockColor = 'text-neutral-800 dark:text-[#CCFF00]';
 
   if (isExpired) {
-    containerStyle = 'bg-rose-50 dark:bg-rose-500/20 border-rose-300 dark:border-rose-500/50 text-rose-800 dark:text-rose-300 animate-pulse';
-    clockColor = 'text-rose-600 dark:text-rose-400';
+    containerStyle = 'bg-[#FF5533]/15 border-[#FF5533]/40 text-[#FF5533] animate-pulse';
+    clockColor = 'text-[#FF5533]';
   } else if (isCritical) {
-    containerStyle = 'bg-rose-50 dark:bg-rose-500/20 border-rose-300 dark:border-rose-500/50 text-rose-800 dark:text-rose-300 animate-pulse shadow-sm';
-    clockColor = 'text-rose-600 dark:text-rose-400';
+    containerStyle = 'bg-[#FF5533]/20 border-[#FF5533]/50 text-[#FF5533] animate-pulse shadow-glow-coral/30';
+    clockColor = 'text-[#FF5533]';
   } else if (isUrgent) {
-    containerStyle = 'bg-amber-50 dark:bg-amber-500/15 border-amber-300 dark:border-amber-500/40 text-amber-800 dark:text-amber-300';
-    clockColor = 'text-amber-600 dark:text-amber-400';
+    containerStyle = 'bg-[#FFD000]/15 border-[#FFD000]/40 text-[#B38F00] dark:text-[#FFD000]';
+    clockColor = 'text-[#FFD000]';
   }
 
   if (compact) {

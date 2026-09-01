@@ -73,16 +73,16 @@ export const TradingCenterDashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-200/80 dark:border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
-              International Settlement Bureau
+            <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+              // International Settlement Bureau
             </span>
             <StatusBadge status="trading_center" size="sm" />
           </div>
-          <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-950 dark:text-white mt-1">
-            Trading Center Terminal
+          <h1 className="font-display font-black text-3xl sm:text-4xl text-black dark:text-white mt-1 uppercase tracking-tight">
+            Trading Center <span className="text-[#FF5533] dark:text-[#CCFF00]">Terminal</span>
           </h1>
         </div>
 
@@ -90,9 +90,9 @@ export const TradingCenterDashboard: React.FC = () => {
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}
-            className="p-2.5 rounded-xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-semibold flex items-center gap-2 shadow-sm"
+            className="p-2.5 rounded-2xl bg-white dark:bg-[#111111] border border-neutral-200 dark:border-white/10 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all text-xs font-display font-bold flex items-center gap-2 shadow-sm"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-sky-500' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#CCFF00]' : ''}`} />
             <span>Sync Market Queue</span>
           </button>
         </div>
@@ -112,9 +112,9 @@ export const TradingCenterDashboard: React.FC = () => {
           label="Active Round"
           value={
             data?.active_round ? (
-              <span className="font-mono text-cyan-400">Round #{data.active_round.round_number}</span>
+              <span className="font-mono text-black dark:text-[#CCFF00]">Round #{data.active_round.round_number}</span>
             ) : (
-              <span className="text-slate-500 text-lg font-bold">Trading Ceasefire</span>
+              <span className="text-neutral-500 text-lg font-display font-bold">Trading Ceasefire</span>
             )
           }
           icon={<ArrowLeftRight className="w-5 h-5" />}
@@ -143,16 +143,16 @@ export const TradingCenterDashboard: React.FC = () => {
 
       {/* Market Volatility Notice (if crises active) */}
       {crises.length > 0 && (
-        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-500/30 flex items-center justify-between gap-4 flex-wrap shadow-soft-card">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#FF5533]/10 border border-[#FF5533]/30 flex items-center justify-between gap-4 flex-wrap shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-500/40 animate-pulse">
+            <div className="p-2.5 rounded-xl bg-[#FF5533] text-white shrink-0 shadow-sm animate-pulse">
               <Flame className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-display font-bold text-sm text-amber-950 dark:text-white">
+              <h4 className="font-display font-bold text-sm text-black dark:text-white">
                 Active Round Geopolitical Crisis
               </h4>
-              <p className="text-xs text-amber-800/80 dark:text-slate-300">
+              <p className="text-xs text-neutral-600 dark:text-neutral-300">
                 Ensure trades reflect current commodity values when auditing deals.
               </p>
             </div>
@@ -165,10 +165,10 @@ export const TradingCenterDashboard: React.FC = () => {
               return (
                 <span
                   key={i}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold font-mono border ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-display font-bold border ${
                     isBoom
-                      ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/40'
-                      : 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-500/40'
+                      ? 'bg-[#CCFF00] text-black border-[#A3CC00]'
+                      : 'bg-[#FF5533] text-white border-[#E03D1B]'
                   }`}
                 >
                   {resName}: {c.value_modifier}x {isBoom ? '(+)' : '(-)'}
@@ -192,11 +192,11 @@ export const TradingCenterDashboard: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
-                Action Required
+              <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+                // Action Required
               </span>
-              <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
-                Pending Trade Queue ({pendingTrades.length})
+              <h3 className="font-display font-bold text-2xl text-black dark:text-white">
+                Pending Trade <span className="text-[#FF5533] dark:text-[#CCFF00]">Queue</span> ({pendingTrades.length})
               </h3>
             </div>
           </div>
@@ -210,13 +210,13 @@ export const TradingCenterDashboard: React.FC = () => {
       )}
 
       {/* Completed Settlements Feed */}
-      <div className="space-y-4 pt-4 border-t border-slate-200/80 dark:border-white/5">
+      <div className="space-y-4 pt-6 border-t border-neutral-200/80 dark:border-white/10">
         <div>
-          <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
-            Audited Ledger
+          <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+            // Audited Ledger
           </span>
-          <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
-            Recent Executed Settlements
+          <h3 className="font-display font-bold text-2xl text-black dark:text-white">
+            Recent Executed <span className="text-[#FF5533] dark:text-[#CCFF00]">Settlements</span>
           </h3>
         </div>
 

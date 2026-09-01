@@ -73,16 +73,16 @@ export const AdminDashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-200/80 dark:border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
-              Supreme Command Console
+            <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+              // Supreme Command Console
             </span>
             <StatusBadge status="admin" size="sm" />
           </div>
-          <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-950 dark:text-white mt-1">
-            Tournament Administration
+          <h1 className="font-display font-black text-3xl sm:text-4xl text-black dark:text-white mt-1 uppercase tracking-tight">
+            Tournament <span className="text-[#FF5533] dark:text-[#CCFF00]">Administration</span>
           </h1>
         </div>
 
@@ -90,9 +90,9 @@ export const AdminDashboard: React.FC = () => {
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}
-            className="p-2.5 rounded-xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-semibold flex items-center gap-2 shadow-sm"
+            className="p-2.5 rounded-2xl bg-white dark:bg-[#111111] border border-neutral-200 dark:border-white/10 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all text-xs font-display font-bold flex items-center gap-2 shadow-sm"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-sky-500' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#CCFF00]' : ''}`} />
             <span>Sync Systems</span>
           </button>
         </div>
@@ -104,11 +104,11 @@ export const AdminDashboard: React.FC = () => {
           label="Tournament Status"
           value={
             gameStatus?.is_finished ? (
-              <span className="text-rose-400 font-mono text-xl font-black">CONCLUDED</span>
+              <span className="text-[#FF5533] font-display text-xl font-black">CONCLUDED</span>
             ) : gameStatus?.is_started ? (
-              <span className="text-emerald-400 font-mono text-xl font-black">ACTIVE</span>
+              <span className="text-black dark:text-[#CCFF00] font-display text-xl font-black">ACTIVE</span>
             ) : (
-              <span className="text-slate-400 font-mono text-xl font-bold">STANDBY</span>
+              <span className="text-neutral-400 font-display text-xl font-bold">STANDBY</span>
             )
           }
           icon={<ShieldCheck className="w-5 h-5" />}
@@ -120,9 +120,9 @@ export const AdminDashboard: React.FC = () => {
           label="Active Round"
           value={
             data?.active_round ? (
-              <span className="font-mono text-cyan-400">Round #{data.active_round.round_number}</span>
+              <span className="font-mono text-black dark:text-[#CCFF00]">Round #{data.active_round.round_number}</span>
             ) : (
-              <span className="text-slate-500 text-lg font-bold">No Active Round</span>
+              <span className="text-neutral-500 text-lg font-display font-bold">No Active Round</span>
             )
           }
           icon={<ArrowLeftRight className="w-5 h-5" />}

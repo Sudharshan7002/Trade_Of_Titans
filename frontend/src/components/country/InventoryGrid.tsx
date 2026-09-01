@@ -27,10 +27,10 @@ export const InventoryGrid: React.FC<InventoryGridProps> = ({
 
   if (!inventory || inventory.length === 0) {
     return (
-      <div className="p-8 text-center bg-white dark:bg-titan-900 rounded-2xl border border-slate-200 dark:border-white/10 shadow-soft-card space-y-2">
-        <Package className="w-10 h-10 text-slate-400 mx-auto" />
-        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">National Stockpiles Empty</p>
-        <p className="text-xs text-slate-500 max-w-sm mx-auto">
+      <div className="p-8 text-center bg-white dark:bg-[#111111] rounded-2xl border border-neutral-200 dark:border-white/10 shadow-sm space-y-2">
+        <Package className="w-10 h-10 text-neutral-400 mx-auto" />
+        <p className="text-sm font-display font-bold text-black dark:text-white">National Stockpiles Empty</p>
+        <p className="text-xs text-neutral-500 max-w-sm mx-auto">
           Your country currently holds zero strategic resource units. Import goods from other countries to build stockpiles.
         </p>
       </div>
@@ -51,82 +51,82 @@ export const InventoryGrid: React.FC<InventoryGridProps> = ({
         return (
           <div
             key={item.resource_id}
-            className="rounded-2xl p-5 bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 shadow-soft-card hover:shadow-soft-card-hover transition-all duration-200 flex flex-col justify-between group"
+            className="rounded-2xl p-5 bg-white dark:bg-[#111111] border border-neutral-200/90 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col justify-between group"
           >
             <div>
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2.5 rounded-xl bg-sky-50 dark:bg-sky-500/15 border border-sky-200/60 dark:border-sky-500/30 text-sky-600 dark:text-sky-400">
+                  <div className="p-2.5 rounded-xl bg-black dark:bg-[#CCFF00] text-[#CCFF00] dark:text-black">
                     <Package className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="font-display font-bold text-base text-slate-900 dark:text-white">{name}</h4>
-                    <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">ID #{item.resource_id}</span>
+                    <h4 className="font-display font-bold text-base text-black dark:text-white">{name}</h4>
+                    <span className="text-[11px] font-mono text-neutral-500 dark:text-neutral-400">ID #{item.resource_id}</span>
                   </div>
                 </div>
 
                 {hasCrisis && (
                   <span
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider border ${
+                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-display font-bold uppercase tracking-wider border ${
                       isSurplusCrisis
-                        ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/40'
-                        : 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-500/40'
+                        ? 'bg-[#CCFF00] text-black border-[#A3CC00]'
+                        : 'bg-[#FF5533] text-white border-[#E03D1B]'
                     }`}
                   >
                     {isSurplusCrisis ? (
-                      <TrendingUp className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                      <TrendingUp className="w-3 h-3" />
                     ) : (
-                      <TrendingDown className="w-3 h-3 text-rose-600 dark:text-rose-400" />
+                      <TrendingDown className="w-3 h-3" />
                     )}
-                    {modifier}x Mkt
+                    {modifier}x
                   </span>
                 )}
               </div>
 
               {/* Quantity Stockpile */}
               <div className="my-3.5">
-                <div className="text-xs font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <div className="text-[11px] font-mono font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                   Available Stock
                 </div>
-                <div className="font-display font-black text-3xl text-slate-950 dark:text-white tracking-tight mt-0.5">
+                <div className="font-display font-black text-3xl text-black dark:text-white tracking-tight mt-0.5">
                   {item.quantity.toLocaleString()}{' '}
-                  <span className="text-xs font-normal text-slate-500 dark:text-slate-400">units</span>
+                  <span className="text-xs font-normal text-neutral-500 dark:text-neutral-400">units</span>
                 </div>
               </div>
 
               {/* Valuation Breakdown */}
-              <div className="p-3 rounded-xl bg-slate-50 dark:bg-black/30 border border-slate-200/60 dark:border-white/5 space-y-1.5 text-xs">
-                <div className="flex justify-between text-slate-500 dark:text-slate-400">
-                  <span>Base Unit Value:</span>
-                  <span className="font-mono text-slate-800 dark:text-slate-200">${baseValue.toFixed(2)}</span>
+              <div className="p-3.5 rounded-xl bg-neutral-50 dark:bg-[#181818] border border-neutral-200/60 dark:border-white/5 space-y-1.5 text-xs">
+                <div className="flex justify-between text-neutral-500 dark:text-neutral-400 font-mono">
+                  <span>Base Unit:</span>
+                  <span className="text-neutral-800 dark:text-neutral-200">${baseValue.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-slate-500 dark:text-slate-400">
-                  <span>Effective Value:</span>
+                <div className="flex justify-between text-neutral-500 dark:text-neutral-400 font-mono">
+                  <span>Effective:</span>
                   <span
-                    className={`font-mono font-semibold ${
+                    className={`font-bold ${
                       hasCrisis
                         ? isSurplusCrisis
-                          ? 'text-emerald-600 dark:text-emerald-400'
-                          : 'text-rose-600 dark:text-rose-400'
-                        : 'text-sky-600 dark:text-sky-300'
+                          ? 'text-[#16a34a] dark:text-[#CCFF00]'
+                          : 'text-[#FF5533]'
+                        : 'text-black dark:text-white'
                     }`}
                   >
                     ${unitValue.toFixed(2)}
                   </span>
                 </div>
-                <div className="flex justify-between text-slate-500 dark:text-slate-400 pt-1.5 border-t border-slate-200 dark:border-white/5 font-semibold">
-                  <span className="text-slate-700 dark:text-slate-300">Total Stock Value:</span>
-                  <span className="font-mono text-slate-950 dark:text-white font-bold">${totalValue.toFixed(2)}</span>
+                <div className="flex justify-between text-neutral-500 dark:text-neutral-400 pt-1.5 border-t border-neutral-200 dark:border-white/5 font-semibold">
+                  <span className="text-neutral-800 dark:text-neutral-300">Total Value:</span>
+                  <span className="font-mono text-black dark:text-white font-bold">${totalValue.toFixed(2)}</span>
                 </div>
               </div>
             </div>
 
             {onExportResource && (
-              <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/5">
+              <div className="mt-4 pt-3 border-t border-neutral-100 dark:border-white/5">
                 <button
                   onClick={() => onExportResource(item.resource_id)}
                   disabled={!canExport || item.quantity <= 0}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-white/5 hover:bg-slate-900 hover:text-white dark:hover:bg-cyan-500/20 dark:hover:text-cyan-200 border border-slate-200 dark:border-white/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-display font-bold text-neutral-800 dark:text-neutral-200 bg-neutral-100 dark:bg-white/5 hover:bg-black hover:text-white dark:hover:bg-[#CCFF00] dark:hover:text-black border border-neutral-200 dark:border-white/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
                 >
                   <ArrowUpRight className="w-3.5 h-3.5" />
                   <span>Initiate Export Offer</span>

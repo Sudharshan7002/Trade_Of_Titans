@@ -45,19 +45,19 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-[#F6F8FB] dark:bg-titan-950 transition-colors duration-200 relative">
+    <div className="min-h-screen flex flex-col justify-center items-center px-4 py-12 bg-[#F0F2F5] dark:bg-[#000000] transition-colors duration-200 relative">
       {/* Top Corner Theme Toggle */}
       <div className="absolute top-6 right-6">
         <button
           onClick={toggleTheme}
-          className="flex items-center justify-center p-2.5 rounded-2xl border border-slate-200 dark:border-white/10 bg-white dark:bg-titan-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-titan-800 transition-all shadow-sm"
+          className="flex items-center justify-center p-3 rounded-2xl border border-neutral-200 dark:border-white/10 bg-white dark:bg-[#111111] text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-[#181818] transition-all shadow-sm"
           title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
           aria-label="Toggle theme"
         >
           {theme === 'dark' ? (
-            <Sun className="w-4 h-4 text-amber-400" />
+            <Sun className="w-4 h-4 text-[#FFD000]" />
           ) : (
-            <Moon className="w-4 h-4 text-slate-700" />
+            <Moon className="w-4 h-4 text-neutral-800" />
           )}
         </button>
       </div>
@@ -65,28 +65,28 @@ export const Login: React.FC = () => {
       <div className="w-full max-w-md space-y-8">
         {/* Brand Header */}
         <div className="text-center space-y-3">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-md mx-auto transition-colors">
-            <Globe className="w-7 h-7" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl bg-black dark:bg-[#CCFF00] text-white dark:text-black shadow-lg mx-auto transition-transform hover:scale-105">
+            <Globe className="w-8 h-8" />
           </div>
           <div>
-            <h1 className="font-display font-black text-3xl sm:text-4xl text-slate-950 dark:text-white tracking-tight uppercase">
-              Trade of Titans
+            <h1 className="font-display font-black text-3xl sm:text-4xl text-black dark:text-white tracking-tight uppercase">
+              Trade of <span className="text-[#FF5533] dark:text-[#CCFF00]">Titans</span>
             </h1>
-            <p className="text-xs sm:text-sm font-mono text-slate-500 dark:text-slate-400 mt-1 tracking-tight">
-              Strategic Trading Summit Console
+            <p className="text-xs sm:text-sm font-mono text-neutral-500 mt-1 tracking-tight">
+              // Strategic Trading Summit Console
             </p>
           </div>
         </div>
 
         {/* Login Card */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 shadow-soft-card space-y-6 transition-colors">
+        <div className="p-7 sm:p-9 rounded-[32px] bg-white dark:bg-[#111111] border border-neutral-200/90 dark:border-white/10 shadow-2xl space-y-6 transition-colors">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
+              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
                 Delegate Username
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                   <User className="w-4 h-4" />
                 </div>
                 <input
@@ -94,18 +94,18 @@ export const Login: React.FC = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Enter username (e.g. usa, admin)"
-                  className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-900 dark:focus:border-sky-400 focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-sky-400/20 transition-all"
+                  className="w-full rounded-2xl pl-10 pr-4 py-3 text-sm bg-neutral-50 dark:bg-[#0A0A0A] border border-neutral-200 dark:border-white/10 text-black dark:text-white placeholder-neutral-400 focus:outline-none focus:border-black dark:focus:border-[#CCFF00] transition-all"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1.5">
+              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 mb-1.5">
                 Security Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -113,7 +113,7 @@ export const Login: React.FC = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-xl pl-10 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-black/40 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-900 dark:focus:border-sky-400 focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-sky-400/20 transition-all"
+                  className="w-full rounded-2xl pl-10 pr-4 py-3 text-sm bg-neutral-50 dark:bg-[#0A0A0A] border border-neutral-200 dark:border-white/10 text-black dark:text-white placeholder-neutral-400 focus:outline-none focus:border-black dark:focus:border-[#CCFF00] transition-all"
                   required
                 />
               </div>
@@ -122,20 +122,20 @@ export const Login: React.FC = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 mt-3 disabled:opacity-50 shadow-sm"
+              className="btn-lime w-full py-3.5 text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 mt-4 disabled:opacity-50"
             >
               {isLoading ? (
-                <div className="w-4 h-4 border-2 border-white dark:border-slate-950 border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
               ) : (
                 <ArrowRight className="w-4 h-4" />
               )}
-              <span>Sign In</span>
+              <span>Authenticate & Enter</span>
             </button>
           </form>
         </div>
 
         {/* Footer info */}
-        <p className="text-center text-xs text-slate-500 dark:text-slate-400 font-mono">
+        <p className="text-center text-xs text-neutral-500 font-mono">
           Authorized delegations & summit officials only
         </p>
       </div>

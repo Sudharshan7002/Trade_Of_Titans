@@ -5,86 +5,62 @@ export default {
   theme: {
     extend: {
       colors: {
-        titan: {
-          50: '#F8FAFC',
-          100: '#F1F5F9',
-          200: '#E2E8F0',
-          300: '#CBD5E1',
-          400: '#94A3B8',
-          500: '#64748B',
-          600: '#475569',
-          700: '#334155',
-          800: '#1E293B',
-          850: '#172033',
-          900: '#0F172A',
-          950: '#0A0D14',
+        // True pitch black dark mode (NO blue / navy)
+        pitch: {
+          950: '#000000', // Canvas
+          900: '#080808', // Elevated background
+          850: '#0F0F0F', // Card surface
+          800: '#171717', // Hover state
+          700: '#262626', // Borders
+          600: '#404040', // Muted borders
+          500: '#737373', // Secondary text
+          400: '#A3A3A3', // Body text
+          300: '#D4D4D4',
+          100: '#F5F5F5',
+          50: '#FFFFFF',
         },
+        // Electric vibrant accents directly from Image 1 & 2
+        electric: {
+          lime: '#CCFF00',      // WizardZ highlight (Image 1)
+          'lime-dark': '#A3CC00',
+          coral: '#FF5533',     // Reference 2 accent
+          'coral-dark': '#E03D1B',
+          violet: '#B026FF',    // High-voltage purple
+          gold: '#FFD000',      // Golden podium
+          amber: '#FF9900',
+        },
+        // Pastel bento colors for light mode (Image 3)
         bento: {
-          peach: {
-            bg: '#FFF7ED',
-            border: '#FED7AA',
-            text: '#C2410C',
-            darkBg: '#2E180E',
-            darkBorder: '#5E2B16',
-          },
-          mint: {
-            bg: '#F0FDF4',
-            border: '#BBF7D0',
-            text: '#15803D',
-            darkBg: '#0D2617',
-            darkBorder: '#165830',
-          },
-          sky: {
-            bg: '#F0F9FF',
-            border: '#BAE6FD',
-            text: '#0369A1',
-            darkBg: '#0C2338',
-            darkBorder: '#144A75',
-          },
-          lavender: {
-            bg: '#F5F3FF',
-            border: '#DDD6FE',
-            text: '#6D28D9',
-            darkBg: '#21183E',
-            darkBorder: '#432C7A',
-          },
-          rose: {
-            bg: '#FFF1F2',
-            border: '#FECDD3',
-            text: '#BE123C',
-            darkBg: '#2E1218',
-            darkBorder: '#5C1D2A',
-          },
-          amber: {
-            bg: '#FFFBEB',
-            border: '#FDE68A',
-            text: '#B45309',
-            darkBg: '#2A1E08',
-            darkBorder: '#573D0E',
-          },
+          cream: '#FFF7ED',
+          peach: '#FFEEDB',
+          mint: '#E6F9EC',
+          lavender: '#EFEAFF',
+          sky: '#E0F2FE',
+          rose: '#FFE4E6',
         },
       },
       borderRadius: {
-        control: '10px',
-        btn: '12px',
+        pill: '9999px',
+        control: '12px',
+        btn: '14px',
         card: '20px',
-        section: '28px',
+        section: '26px',
         container: '32px',
       },
       fontFamily: {
-        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['"Outfit"', '"Inter"', 'system-ui', 'sans-serif'],
+        display: ['"Space Grotesk"', 'sans-serif'],
+        syne: ['"Syne"', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       boxShadow: {
-        'soft-card': '0 2px 14px -2px rgba(15, 23, 42, 0.04), 0 1px 4px rgba(15, 23, 42, 0.02)',
-        'soft-card-hover': '0 12px 28px -4px rgba(15, 23, 42, 0.07), 0 2px 8px -2px rgba(15, 23, 42, 0.03)',
-        'glass-panel': '0 8px 32px 0 rgba(15, 23, 42, 0.04)',
-        'glass-dark': '0 8px 32px 0 rgba(0, 0, 0, 0.35)',
-        'glow-cyan': '0 10px 24px -12px rgba(6, 182, 212, 0.4)',
-        'glow-emerald': '0 10px 24px -12px rgba(16, 185, 129, 0.4)',
-        'glow-gold': '0 10px 24px -12px rgba(245, 158, 11, 0.4)',
-        'glow-rose': '0 10px 24px -12px rgba(244, 63, 94, 0.4)',
+        'soft-card': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+        'soft-card-hover': '0 12px 30px -4px rgba(0, 0, 0, 0.1)',
+        'glass-light': '0 8px 32px 0 rgba(0, 0, 0, 0.06)',
+        'glass-pitch': '0 8px 32px 0 rgba(0, 0, 0, 0.9)',
+        'glow-lime': '0 0 25px -4px rgba(204, 255, 0, 0.45)',
+        'glow-coral': '0 0 25px -4px rgba(255, 85, 51, 0.45)',
+        'glow-gold': '0 0 25px -4px rgba(255, 208, 0, 0.45)',
       },
     },
   },

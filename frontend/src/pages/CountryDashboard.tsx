@@ -51,8 +51,6 @@ export const CountryDashboard: React.FC = () => {
     await Promise.all([fetchDashboard(), refreshGameState()]);
   };
 
-  const isRoundActive = !!data?.active_round;
-
   if (isLoading && !data) {
     return (
       <div className="space-y-6">
@@ -76,15 +74,15 @@ export const CountryDashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Top Header & Fast Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-neutral-200/80 dark:border-white/10">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
-              National Operations Console
+            <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+              // National Operations Console
             </span>
             <StatusBadge status="country" size="sm" />
           </div>
-          <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-950 dark:text-white mt-1">
+          <h1 className="font-display font-black text-3xl sm:text-4xl text-black dark:text-white mt-1 uppercase tracking-tight">
             {country?.name || 'Sovereign Delegate'}
           </h1>
         </div>
@@ -93,10 +91,10 @@ export const CountryDashboard: React.FC = () => {
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}
-            className="p-2.5 rounded-xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-semibold flex items-center gap-2 shadow-sm"
+            className="p-2.5 rounded-2xl bg-white dark:bg-[#111111] border border-neutral-200 dark:border-white/10 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all text-xs font-display font-bold flex items-center gap-2 shadow-sm"
             title="Refresh dashboard telemetry"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-sky-500' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#CCFF00]' : ''}`} />
             <span className="hidden sm:inline">Sync Data</span>
           </button>
         </div>
@@ -121,9 +119,9 @@ export const CountryDashboard: React.FC = () => {
           label="Current Game Round"
           value={
             data?.active_round ? (
-              <span className="font-mono text-cyan-400">Round #{data.active_round.round_number}</span>
+              <span className="font-mono text-black dark:text-[#CCFF00]">Round #{data.active_round.round_number}</span>
             ) : (
-              <span className="text-slate-500 text-xl font-bold">Intermission</span>
+              <span className="text-neutral-500 text-xl font-display font-bold">Intermission</span>
             )
           }
           icon={<ArrowLeftRight className="w-5 h-5" />}
@@ -162,16 +160,16 @@ export const CountryDashboard: React.FC = () => {
 
       {/* Active Crises Alert Bar (if any in round) */}
       {crises.length > 0 && (
-        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-500/30 flex items-center justify-between gap-4 flex-wrap shadow-soft-card">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#FF5533]/10 border border-[#FF5533]/30 flex items-center justify-between gap-4 flex-wrap shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-500/40 animate-pulse">
+            <div className="p-2.5 rounded-xl bg-[#FF5533] text-white shrink-0 shadow-sm animate-pulse">
               <Flame className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-display font-bold text-sm text-amber-950 dark:text-white">
+              <h4 className="font-display font-bold text-sm text-black dark:text-white">
                 Active Round Market Crisis Detected
               </h4>
-              <p className="text-xs text-amber-800/80 dark:text-slate-300">
+              <p className="text-xs text-neutral-600 dark:text-neutral-300">
                 Resource values are actively altered by geopolitical events this round.
               </p>
             </div>
@@ -184,10 +182,10 @@ export const CountryDashboard: React.FC = () => {
               return (
                 <span
                   key={i}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold font-mono border ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-display font-bold border ${
                     isBoom
-                      ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/40'
-                      : 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-500/40'
+                      ? 'bg-[#CCFF00] text-black border-[#A3CC00]'
+                      : 'bg-[#FF5533] text-white border-[#E03D1B]'
                   }`}
                 >
                   {resName}: {c.value_modifier}x {isBoom ? '(+)' : '(-)'}
@@ -207,11 +205,11 @@ export const CountryDashboard: React.FC = () => {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
-                What Do I Currently Have?
+              <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+                // 01 Inventory Stock
               </span>
-              <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
-                National Inventory Stockpiles
+              <h3 className="font-display font-bold text-2xl text-black dark:text-white">
+                National <span className="text-[#FF5533] dark:text-[#CCFF00]">Stockpiles</span>
               </h3>
             </div>
           </div>
@@ -226,11 +224,11 @@ export const CountryDashboard: React.FC = () => {
         {/* Right 1 Col: Strategic Import Objectives */}
         <div className="space-y-4">
           <div>
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
-              What Do I Need?
+            <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+              // 02 Targets
             </span>
-            <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
-              Import Objectives
+            <h3 className="font-display font-bold text-2xl text-black dark:text-white">
+              Import <span className="text-[#FF5533] dark:text-[#CCFF00]">Objectives</span>
             </h3>
           </div>
 
@@ -242,14 +240,14 @@ export const CountryDashboard: React.FC = () => {
       </div>
 
       {/* Sovereign Trade Ledger */}
-      <div className="space-y-4 pt-4 border-t border-slate-200/80 dark:border-white/5">
+      <div className="space-y-4 pt-6 border-t border-neutral-200/80 dark:border-white/10">
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
-              What Have I Traded?
+            <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase">
+              // 03 Audited Ledger
             </span>
-            <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
-              Sovereign Trade Ledger
+            <h3 className="font-display font-bold text-2xl text-black dark:text-white">
+              Sovereign <span className="text-[#FF5533] dark:text-[#CCFF00]">Trade History</span>
             </h3>
           </div>
         </div>

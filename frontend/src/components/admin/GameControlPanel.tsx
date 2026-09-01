@@ -68,29 +68,29 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = ({ onStateChang
 
   return (
     <>
-      <div className="p-6 rounded-2xl glass-panel border border-white/10 space-y-5">
+      <div className="p-6 rounded-3xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 shadow-soft-card space-y-5">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
+            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
               Global Lifecycle Command
             </span>
-            <h3 className="font-display font-bold text-xl text-white mt-0.5">
+            <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white mt-0.5">
               Tournament Master Controls
             </h3>
           </div>
 
           <div>
             {gameStatus?.is_finished ? (
-              <span className="px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-rose-950/80 text-rose-300 border border-rose-500/40">
+              <span className="px-3.5 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/40">
                 Tournament Concluded
               </span>
             ) : gameStatus?.is_started ? (
-              <span className="px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 shadow-glow-emerald/20 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="px-3.5 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/40 flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 Tournament Active
               </span>
             ) : (
-              <span className="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-slate-800 text-slate-300 border border-slate-700">
+              <span className="px-3.5 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                 Not Started
               </span>
             )}
@@ -99,13 +99,13 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = ({ onStateChang
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Start Game Action */}
-          <div className="p-4 rounded-xl bg-titan-950/60 border border-white/5 space-y-3 flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-titan-950/60 border border-slate-200/80 dark:border-white/5 space-y-3 flex flex-col justify-between shadow-sm">
             <div>
-              <div className="flex items-center gap-2 font-bold text-sm text-white">
-                <Play className="w-4 h-4 text-emerald-400" />
+              <div className="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-white">
+                <Play className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Initialize / Start Game</span>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                 Activates the game session, allowing round controllers and national delegates to initiate trades.
               </p>
             </div>
@@ -113,41 +113,40 @@ export const GameControlPanel: React.FC<GameControlPanelProps> = ({ onStateChang
             <button
               onClick={gameStatus?.is_finished ? () => setIsConfirmResetOpen(true) : handleStartGame}
               disabled={isStarting || isResetting || gameStatus?.is_started}
-              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-titan-950 font-black text-xs uppercase tracking-wider shadow-glow-emerald transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
             >
               {isStarting || isResetting ? (
-                <div className="w-3.5 h-3.5 border-2 border-titan-950 border-t-transparent rounded-full animate-spin" />
+                <div className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
               ) : (
-                gameStatus?.is_finished ? <RotateCcw className="w-4 h-4 text-titan-950" /> : <Play className="w-4 h-4 text-titan-950 fill-current" />
+                gameStatus?.is_finished ? <RotateCcw className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />
               )}
               <span>{gameStatus?.is_started ? 'Game Already Active' : gameStatus?.is_finished ? 'Prepare New Tournament' : 'Start Tournament'}</span>
             </button>
           </div>
 
           {/* End Game Action */}
-          <div className="p-4 rounded-xl bg-titan-950/60 border border-rose-500/20 space-y-3 flex flex-col justify-between">
+          <div className="p-4 rounded-2xl bg-rose-50/40 dark:bg-titan-950/60 border border-rose-200 dark:border-rose-500/20 space-y-3 flex flex-col justify-between shadow-sm">
             <div>
-              <div className="flex items-center gap-2 font-bold text-sm text-rose-300">
-                <Square className="w-4 h-4 text-rose-400" />
+              <div className="flex items-center gap-2 font-bold text-sm text-rose-800 dark:text-rose-300">
+                <Square className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                 <span>Conclude & Finalize Rankings</span>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                 Permanently closes the game, calculates final scores & standings, and generates the podium. Requires all rounds to be ended first.
               </p>
             </div>
 
             <button
               onClick={() => setIsConfirmEndOpen(true)}
-              disabled={
-                isEnding ||
-                !gameStatus?.is_started ||
-                gameStatus?.is_finished ||
-                !!activeRound
-              }
-              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-500 hover:to-red-600 text-white font-black text-xs uppercase tracking-wider shadow-glow-crimson transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              disabled={isEnding || !gameStatus?.is_started || gameStatus?.is_finished || !!activeRound}
+              className="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
             >
-              <Square className="w-4 h-4 fill-current" />
-              <span>Conclude Game</span>
+              {isEnding ? (
+                <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Square className="w-4 h-4" />
+              )}
+              <span>{activeRound ? 'Cannot End (Active Round)' : 'Conclude & Finalize'}</span>
             </button>
           </div>
         </div>

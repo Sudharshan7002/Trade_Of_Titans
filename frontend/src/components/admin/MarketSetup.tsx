@@ -16,20 +16,143 @@ export const MarketSetup: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const createResource = async (event: React.FormEvent) => {
-    event.preventDefault(); setLoading(true);
-    try { await referenceApi.createResource({ name: resourceName, base_value: baseValue }); setResourceName(''); await Promise.all([refreshGameState(), refreshReferenceData()]); success('Resource added', 'The market catalogue has been updated.'); }
-    catch (err: any) { error('Could not add resource', err.message); } finally { setLoading(false); }
+    event.preventDefault();
+    setLoading(true);
+    try {
+      await referenceApi.createResource({ name: resourceName, base_value: baseValue });
+      setResourceName('');
+      await Promise.all([refreshGameState(), refreshReferenceData()]);
+      success('Resource added', 'The market catalogue has been updated.');
+    } catch (err: any) {
+      error('Could not add resource', err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
   const addInventory = async (event: React.FormEvent) => {
-    event.preventDefault(); if (!countryId || !resourceId) return error('Choose country and resource', 'Both selections are required.'); setLoading(true);
-    try { await referenceApi.createInventory(Number(countryId), Number(resourceId), quantity); success('Stockpile allocated', 'Initial inventory is ready for trading.'); }
-    catch (err: any) { error('Could not allocate stockpile', err.message); } finally { setLoading(false); }
+    event.preventDefault();
+    if (!countryId || !resourceId) return error('Choose country and resource', 'Both selections are required.');
+    setLoading(true);
+    try {
+      await referenceApi.createInventory(Number(countryId), Number(resourceId), quantity);
+      success('Stockpile allocated', 'Initial inventory is ready for trading.');
+    } catch (err: any) {
+      error('Could not allocate stockpile', err.message);
+    } finally {
+      setLoading(false);
+    }
   };
+
   const addObjective = async () => {
-    if (!countryId || !resourceId) return error('Choose country and resource', 'Both selections are required.'); setLoading(true);
-    try { await adminApi.createObjective(Number(countryId), Number(resourceId), quantity); success('Objective assigned', 'The country import target is now tracked.'); }
-    catch (err: any) { error('Could not assign objective', err.message); } finally { setLoading(false); }
+    if (!countryId || !resourceId) return error('Choose country and resource', 'Both selections are required.');
+    setLoading(true);
+    try {
+      await adminApi.createObjective(Number(countryId), Number(resourceId), quantity);
+      success('Objective assigned', 'The country import target is now tracked.');
+    } catch (err: any) {
+      error('Could not assign objective', err.message);
+    } finally {
+      setLoading(false);
+    }
   };
-  const selects = <><select value={countryId} onChange={e => setCountryId(e.target.value ? Number(e.target.value) : '')} className="glass-input rounded-xl px-3 py-2 text-xs text-white" required><option value="" className="bg-titan-900">Country</option>{countries.map(c => <option className="bg-titan-900" key={c.id} value={c.id}>{c.name}</option>)}</select><select value={resourceId} onChange={e => setResourceId(e.target.value ? Number(e.target.value) : '')} className="glass-input rounded-xl px-3 py-2 text-xs text-white" required><option value="" className="bg-titan-900">Resource</option>{resources.map(r => <option className="bg-titan-900" key={r.id} value={r.id}>{r.name}</option>)}</select><input type="number" min="1" value={quantity} onChange={e => setQuantity(Number(e.target.value))} className="glass-input rounded-xl px-3 py-2 text-xs text-white" /></>;
-  return <div className="p-6 rounded-2xl glass-panel border border-white/10 space-y-4"><div><span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">Market foundation</span><h3 className="font-display font-bold text-xl text-white mt-0.5">Resources, Stockpiles & Objectives</h3></div><form onSubmit={createResource} className="flex flex-wrap gap-2"><input value={resourceName} onChange={e => setResourceName(e.target.value)} placeholder="Resource name" required className="glass-input rounded-xl px-3 py-2 text-xs text-white"/><input type="number" min="0" step="0.01" value={baseValue} onChange={e => setBaseValue(Number(e.target.value))} className="glass-input rounded-xl px-3 py-2 text-xs text-white"/><button disabled={loading} className="px-3 py-2 rounded-xl bg-cyan-500 text-titan-950 text-xs font-black"><Plus className="w-3.5 h-3.5 inline"/> Add resource</button></form><form onSubmit={addInventory} className="flex flex-wrap gap-2">{selects}<button disabled={loading} className="px-3 py-2 rounded-xl bg-emerald-500 text-titan-950 text-xs font-black"><Boxes className="w-3.5 h-3.5 inline"/> Allocate stock</button><button type="button" disabled={loading} onClick={addObjective} className="px-3 py-2 rounded-xl bg-amber-400 text-titan-950 text-xs font-black">Assign import objective</button></form></div>;
+
+  return (
+    <div className="p-6 rounded-3xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 shadow-soft-card space-y-5">
+      <div>
+        <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
+          Market Foundation
+        </span>
+        <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white mt-0.5">
+          Resources, Stockpiles & Objectives
+        </h3>
+      </div>
+
+      {/* Add Resource Form */}
+      <form onSubmit={createResource} className="p-4 rounded-2xl bg-slate-50 dark:bg-titan-950/60 border border-slate-200/80 dark:border-white/5 flex flex-wrap gap-2.5 items-center shadow-sm">
+        <input
+          value={resourceName}
+          onChange={(e) => setResourceName(e.target.value)}
+          placeholder="Resource name (e.g. Lithium)"
+          required
+          className="rounded-xl px-3 py-2 text-xs bg-white dark:bg-titan-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-slate-900 dark:focus:border-sky-400 flex-1 min-w-[160px]"
+        />
+        <input
+          type="number"
+          min="0"
+          step="0.01"
+          value={baseValue}
+          onChange={(e) => setBaseValue(Number(e.target.value))}
+          placeholder="Base Value ($)"
+          className="rounded-xl px-3 py-2 text-xs bg-white dark:bg-titan-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-slate-900 dark:focus:border-sky-400 w-28"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center gap-1.5 disabled:opacity-40"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          <span>Add Resource</span>
+        </button>
+      </form>
+
+      {/* Allocate Stock & Objectives Form */}
+      <form onSubmit={addInventory} className="p-4 rounded-2xl bg-slate-50 dark:bg-titan-950/60 border border-slate-200/80 dark:border-white/5 flex flex-wrap gap-2.5 items-center shadow-sm">
+        <select
+          value={countryId}
+          onChange={(e) => setCountryId(e.target.value ? Number(e.target.value) : '')}
+          className="rounded-xl px-3 py-2 text-xs bg-white dark:bg-titan-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-sky-400 flex-1 min-w-[140px]"
+          required
+        >
+          <option value="" className="bg-white dark:bg-titan-900 text-slate-400">Select Country...</option>
+          {countries.map((c) => (
+            <option className="bg-white dark:bg-titan-900 text-slate-900 dark:text-white" key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={resourceId}
+          onChange={(e) => setResourceId(e.target.value ? Number(e.target.value) : '')}
+          className="rounded-xl px-3 py-2 text-xs bg-white dark:bg-titan-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-sky-400 flex-1 min-w-[140px]"
+          required
+        >
+          <option value="" className="bg-white dark:bg-titan-900 text-slate-400">Select Resource...</option>
+          {resources.map((r) => (
+            <option className="bg-white dark:bg-titan-900 text-slate-900 dark:text-white" key={r.id} value={r.id}>
+              {r.name}
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="number"
+          min="1"
+          value={quantity}
+          onChange={(e) => setQuantity(Number(e.target.value))}
+          placeholder="Quantity"
+          className="rounded-xl px-3 py-2 text-xs bg-white dark:bg-titan-900 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-slate-900 dark:focus:border-sky-400 w-24"
+        />
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 text-xs font-bold uppercase tracking-wider shadow-sm transition-all flex items-center gap-1.5 disabled:opacity-40"
+        >
+          <Boxes className="w-3.5 h-3.5" />
+          <span>Allocate Stock</span>
+        </button>
+
+        <button
+          type="button"
+          disabled={loading}
+          onClick={addObjective}
+          className="px-4 py-2 rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-titan-800 text-slate-800 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-titan-700 text-xs font-bold uppercase tracking-wider shadow-sm transition-all disabled:opacity-40"
+        >
+          Assign Import Objective
+        </button>
+      </form>
+    </div>
+  );
 };

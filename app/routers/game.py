@@ -168,9 +168,9 @@ def get_game_status(
     game = db.query(Game).first()
 
     if not game:
-        raise HTTPException(
-            status_code=404,
-            detail="Game has not been initialized"
-        )
+        game = Game(is_started=False, is_finished=False)
+        db.add(game)
+        db.commit()
+        db.refresh(game)
 
     return game

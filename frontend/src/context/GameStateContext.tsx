@@ -72,14 +72,14 @@ export const GameStateProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     refreshReferenceData();
     refreshGameState();
 
     // Gentle polling every 20 seconds if authenticated to catch round flips
-    if (isAuthenticated) {
-      const interval = setInterval(refreshGameState, 20000);
-      return () => clearInterval(interval);
-    }
+    const interval = setInterval(refreshGameState, 20000);
+    return () => clearInterval(interval);
   }, [isAuthenticated, refreshGameState, refreshReferenceData]);
 
   const countriesMap = React.useMemo(() => {

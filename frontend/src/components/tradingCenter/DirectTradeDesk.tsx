@@ -114,27 +114,27 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
   };
 
   return (
-    <div className="p-6 rounded-2xl glass-panel border border-cyan-500/20 space-y-6">
+    <div className="p-6 rounded-3xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 shadow-soft-card space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-white/10 pb-4">
         <div>
-          <span className="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase">
+          <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
             Direct Settlement Console
           </span>
-          <h2 className="font-display font-black text-xl text-white mt-0.5">
+          <h2 className="font-display font-black text-xl text-slate-950 dark:text-white mt-0.5">
             Conduct Bilateral Trade
           </h2>
         </div>
 
         {/* Mode Toggle */}
-        <div className="flex rounded-xl bg-titan-900 border border-white/10 p-1">
+        <div className="flex rounded-xl bg-slate-100 dark:bg-titan-950 border border-slate-200/80 dark:border-white/10 p-1">
           <button
             type="button"
             onClick={() => setTradeType('money')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
               tradeType === 'money'
-                ? 'bg-emerald-500 text-titan-950 shadow-glow-emerald/30'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
             }`}
           >
             <DollarSign className="w-3.5 h-3.5" />
@@ -146,8 +146,8 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
             onClick={() => setTradeType('resource')}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
               tradeType === 'resource'
-                ? 'bg-amber-500 text-titan-950 shadow-glow-gold/30'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
             }`}
           >
             <Repeat className="w-3.5 h-3.5" />
@@ -160,8 +160,8 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
         {/* Country Selection Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
           {/* Exporter (Country 1) */}
-          <div className="p-4 rounded-xl bg-titan-950/60 border border-white/5 space-y-2">
-            <label className="block text-xs font-mono font-bold tracking-wider text-emerald-400 uppercase">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-titan-950/60 border border-slate-200/80 dark:border-white/5 space-y-2">
+            <label className="block text-xs font-mono font-bold tracking-wider text-emerald-700 dark:text-emerald-400 uppercase">
               Country 1 — Exporter (Seller)
             </label>
             <select
@@ -371,23 +371,23 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
 
           {/* Summary Banner */}
           {exportCountryId && importCountryId && resourceId && (
-            <div className="p-3.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-between gap-4 flex-wrap text-xs">
+            <div className="p-3.5 rounded-2xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-500/30 flex items-center justify-between gap-4 flex-wrap text-xs shadow-sm">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-white">{getCountryName(Number(exportCountryId))}</span>
-                <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="font-bold text-white">{getCountryName(Number(importCountryId))}</span>
+                <span className="font-bold text-slate-950 dark:text-white">{getCountryName(Number(exportCountryId))}</span>
+                <ArrowRight className="w-3.5 h-3.5 text-sky-600 dark:text-cyan-400" />
+                <span className="font-bold text-slate-950 dark:text-white">{getCountryName(Number(importCountryId))}</span>
               </div>
 
-              <div className="font-mono text-cyan-300">
+              <div className="font-mono text-slate-800 dark:text-cyan-300">
                 {tradeType === 'money' ? (
                   <span>
-                    Sending <strong className="text-white">{quantity}x {getResourceName(Number(resourceId))}</strong> for{' '}
-                    <strong className="text-emerald-400">${totalMoney.toLocaleString()}</strong>
+                    Sending <strong className="text-slate-950 dark:text-white">{quantity.toLocaleString()}x {getResourceName(Number(resourceId))}</strong> for{' '}
+                    <strong className="text-emerald-700 dark:text-emerald-400">${totalMoney.toLocaleString()}</strong>
                   </span>
                 ) : (
                   <span>
-                    Swapping <strong className="text-white">{quantity}x {getResourceName(Number(resourceId))}</strong> for{' '}
-                    <strong className="text-amber-400">{paymentQuantity}x {getResourceName(Number(paymentResourceId) || 0)}</strong>
+                    Swapping <strong className="text-slate-950 dark:text-white">{quantity.toLocaleString()}x {getResourceName(Number(resourceId))}</strong> for{' '}
+                    <strong className="text-amber-700 dark:text-amber-400">{paymentQuantity.toLocaleString()}x {getResourceName(Number(paymentResourceId) || 0)}</strong>
                   </span>
                 )}
               </div>
@@ -400,12 +400,12 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
           <button
             type="submit"
             disabled={isSubmitting || !isExecutable}
-            className="w-full sm:w-auto py-3 px-6 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-titan-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-glow-cyan transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full sm:w-auto py-3 px-6 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-sm transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
-              <div className="w-4 h-4 border-2 border-titan-950 border-t-transparent rounded-full animate-spin" />
+              <div className="w-4 h-4 border-2 border-white dark:border-slate-950 border-t-transparent rounded-full animate-spin" />
             ) : (
-              <CheckCircle2 className="w-4 h-4 text-titan-950" />
+              <CheckCircle2 className="w-4 h-4" />
             )}
             <span>Execute Trade Immediately</span>
           </button>

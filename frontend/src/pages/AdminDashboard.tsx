@@ -81,7 +81,7 @@ export const AdminDashboard: React.FC = () => {
             </span>
             <StatusBadge status="admin" size="sm" />
           </div>
-          <h1 className="font-display font-black text-2xl sm:text-3xl text-white mt-1">
+          <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-950 dark:text-white mt-1">
             Tournament Administration
           </h1>
         </div>
@@ -90,9 +90,9 @@ export const AdminDashboard: React.FC = () => {
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}
-            className="p-2.5 rounded-xl glass-panel border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-semibold flex items-center gap-2"
+            className="p-2.5 rounded-xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-semibold flex items-center gap-2 shadow-sm"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-sky-500' : ''}`} />
             <span>Sync Systems</span>
           </button>
         </div>

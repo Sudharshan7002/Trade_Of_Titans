@@ -64,37 +64,37 @@ export const RoundManager: React.FC<RoundManagerProps> = ({ onRoundAction }) => 
   };
 
   return (
-    <div className="p-6 rounded-2xl glass-panel border border-white/10 space-y-5">
+    <div className="p-6 rounded-3xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 shadow-soft-card space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
+          <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
             Timeline Orchestration
           </span>
-          <h3 className="font-display font-bold text-xl text-white mt-0.5">Round Management</h3>
+          <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white mt-0.5">Round Management</h3>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-slate-300">
-            <Clock className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="font-semibold text-slate-400">Round Length:</span>
+          <div className="flex items-center gap-2 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-1.5 text-xs text-slate-700 dark:text-slate-300 shadow-sm">
+            <Clock className="w-3.5 h-3.5 text-sky-600 dark:text-cyan-400" />
+            <span className="font-semibold text-slate-600 dark:text-slate-400">Round Length:</span>
             <input
               type="number"
               min={1}
               max={60}
               value={durationMinutes}
               onChange={(e) => setDurationMinutes(Math.max(1, parseInt(e.target.value) || 1))}
-              className="w-14 bg-black/40 border border-cyan-500/30 rounded-lg px-2 py-1 text-center font-mono font-bold text-white focus:outline-none focus:border-cyan-400"
+              className="w-14 bg-white dark:bg-black/40 border border-slate-300 dark:border-cyan-500/30 rounded-lg px-2 py-1 text-center font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-cyan-400 shadow-inner"
             />
-            <span className="text-slate-400 font-mono">min</span>
+            <span className="text-slate-500 dark:text-slate-400 font-mono">min</span>
           </div>
 
           <button
             onClick={handleCreateRound}
             disabled={isCreating || gameStatus?.is_finished}
-            className="flex items-center gap-2 py-2 px-4 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/40 text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-40"
+            className="flex items-center gap-2 py-2 px-4 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-40 shadow-sm"
           >
             {isCreating ? (
-              <div className="w-3.5 h-3.5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+              <div className="w-3.5 h-3.5 border-2 border-white dark:border-slate-950 border-t-transparent rounded-full animate-spin" />
             ) : (
               <Plus className="w-4 h-4" />
             )}
@@ -104,9 +104,9 @@ export const RoundManager: React.FC<RoundManagerProps> = ({ onRoundAction }) => 
       </div>
 
       {allRounds.length === 0 ? (
-        <div className="p-8 text-center glass-card rounded-xl border border-white/5 space-y-2">
-          <Clock className="w-8 h-8 text-slate-500 mx-auto" />
-          <p className="text-sm font-semibold text-slate-300">No Rounds Scheduled</p>
+        <div className="p-8 text-center bg-slate-50 dark:bg-titan-950/60 rounded-2xl border border-slate-200 dark:border-white/5 space-y-2">
+          <Clock className="w-8 h-8 text-slate-400 mx-auto" />
+          <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">No Rounds Scheduled</p>
           <p className="text-xs text-slate-500">
             Click "Create Round #1" to initiate the strategy timetable.
           </p>

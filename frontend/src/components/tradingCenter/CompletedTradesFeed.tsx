@@ -15,9 +15,9 @@ export const CompletedTradesFeed: React.FC<CompletedTradesFeedProps> = ({
 
   if (!completedTrades || completedTrades.length === 0) {
     return (
-      <div className="p-8 text-center glass-card rounded-2xl border border-white/5 space-y-2">
-        <CheckCheck className="w-10 h-10 text-slate-500 mx-auto" />
-        <p className="text-sm font-semibold text-slate-300">No Historical Trades Yet</p>
+      <div className="p-8 text-center bg-white dark:bg-titan-900 rounded-2xl border border-slate-200 dark:border-white/10 space-y-2">
+        <CheckCheck className="w-10 h-10 text-slate-400 mx-auto" />
+        <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">No Historical Trades Yet</p>
         <p className="text-xs text-slate-500 max-w-sm mx-auto">
           Executed international agreements will appear in this audited settlement feed.
         </p>
@@ -29,7 +29,7 @@ export const CompletedTradesFeed: React.FC<CompletedTradesFeedProps> = ({
     <div className="overflow-x-auto subtle-scrollbar">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-white/10 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400">
+          <tr className="border-b border-slate-200 dark:border-white/10 text-[11px] font-mono font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
             <th className="py-3 px-4">ID</th>
             <th className="py-3 px-4">Round</th>
             <th className="py-3 px-4">Transfer Direction</th>
@@ -38,7 +38,7 @@ export const CompletedTradesFeed: React.FC<CompletedTradesFeedProps> = ({
             <th className="py-3 px-4 text-right">Status</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-white/5 text-xs">
+        <tbody className="divide-y divide-slate-100 dark:divide-white/5 text-xs">
           {completedTrades.map((t) => {
             const exporter = t.export_country_name || getCountryName(t.export_country_id);
             const importer = t.import_country_name || getCountryName(t.import_country_id);
@@ -46,18 +46,18 @@ export const CompletedTradesFeed: React.FC<CompletedTradesFeedProps> = ({
             const totalCash = Number(t.price) * t.quantity;
 
             return (
-              <tr key={t.id} className="hover:bg-white/5 transition-colors">
-                <td className="py-3 px-4 font-mono font-bold text-slate-300">#{t.id}</td>
-                <td className="py-3 px-4 font-mono text-slate-400">R#{t.round_id}</td>
+              <tr key={t.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+                <td className="py-3 px-4 font-mono font-bold text-slate-600 dark:text-slate-300">#{t.id}</td>
+                <td className="py-3 px-4 font-mono text-slate-500 dark:text-slate-400">Round #{t.round_id}</td>
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-emerald-400">{exporter}</span>
-                    <ArrowRight className="w-3 h-3 text-slate-500" />
-                    <span className="font-semibold text-cyan-400">{importer}</span>
+                    <span className="font-semibold text-emerald-700 dark:text-emerald-400">{exporter}</span>
+                    <ArrowRight className="w-3 h-3 text-slate-400" />
+                    <span className="font-semibold text-sky-700 dark:text-cyan-400">{importer}</span>
                   </div>
                 </td>
                 <td className="py-3 px-4">
-                  <div className="font-medium text-white">{resource}</div>
+                  <div className="font-bold text-slate-900 dark:text-white">{resource}</div>
                   <div className="text-[11px] text-slate-400 font-mono">{t.quantity} units</div>
                 </td>
                 <td className="py-3 px-4">

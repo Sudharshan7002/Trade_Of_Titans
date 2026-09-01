@@ -108,7 +108,7 @@ export const RankingsPage: React.FC = () => {
               </span>
             )}
           </div>
-          <h1 className="font-display font-black text-2xl sm:text-3xl text-white mt-1">
+          <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-950 dark:text-white mt-1">
             Global Strategy Leaderboard
           </h1>
         </div>
@@ -116,14 +116,14 @@ export const RankingsPage: React.FC = () => {
         <div className="flex items-center gap-3">
           {/* Toggle between Live and Final if both available */}
           {finalRankings.length > 0 && (
-            <div className="flex rounded-xl bg-titan-900 border border-white/10 p-1">
+            <div className="flex rounded-xl bg-slate-100 dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 p-1">
               <button
                 type="button"
                 onClick={() => setViewMode('final')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   viewMode === 'final'
-                    ? 'bg-amber-500 text-titan-950 shadow-glow-gold'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
                 }`}
               >
                 Final Ceremony
@@ -133,8 +133,8 @@ export const RankingsPage: React.FC = () => {
                 onClick={() => setViewMode('live')}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   viewMode === 'live'
-                    ? 'bg-cyan-500 text-titan-950 shadow-glow-cyan'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-950 shadow-sm'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white'
                 }`}
               >
                 Live Metrics
@@ -145,9 +145,9 @@ export const RankingsPage: React.FC = () => {
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}
-            className="p-2.5 rounded-xl glass-panel border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-semibold flex items-center gap-2"
+            className="p-2.5 rounded-xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-semibold flex items-center gap-2 shadow-sm"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-sky-500' : ''}`} />
             <span className="hidden sm:inline">Refresh</span>
           </button>
         </div>
@@ -160,13 +160,13 @@ export const RankingsPage: React.FC = () => {
       />
 
       {/* Full Leaderboard Table */}
-      <div className="space-y-4 pt-4 border-t border-white/5">
+      <div className="space-y-4 pt-4 border-t border-slate-200/80 dark:border-white/5">
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
+            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
               Full Standings
             </span>
-            <h3 className="font-display font-bold text-xl text-white">
+            <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
               Sovereign State Placements ({activeDisplayRankings.length})
             </h3>
           </div>

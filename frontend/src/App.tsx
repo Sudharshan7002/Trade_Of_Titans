@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from './context/ThemeContext';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
 import { GameStateProvider } from './context/GameStateContext';
@@ -16,9 +17,10 @@ import { NotFound } from './pages/NotFound';
 export const App: React.FC = () => {
   return (
     <BrowserRouter>
-      <ToastProvider>
-        <AuthProvider>
-          <GameStateProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <GameStateProvider>
             <Routes>
               {/* Public Entry Routes */}
               <Route path="/" element={<RootRedirect />} />
@@ -70,6 +72,7 @@ export const App: React.FC = () => {
           </GameStateProvider>
         </AuthProvider>
       </ToastProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 };

@@ -84,7 +84,7 @@ export const CountryDashboard: React.FC = () => {
             </span>
             <StatusBadge status="country" size="sm" />
           </div>
-          <h1 className="font-display font-black text-2xl sm:text-3xl text-white mt-1">
+          <h1 className="font-display font-black text-2xl sm:text-3xl text-slate-950 dark:text-white mt-1">
             {country?.name || 'Sovereign Delegate'}
           </h1>
         </div>
@@ -93,10 +93,10 @@ export const CountryDashboard: React.FC = () => {
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}
-            className="p-2.5 rounded-xl glass-panel border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-all text-xs font-semibold flex items-center gap-2"
+            className="p-2.5 rounded-xl bg-white dark:bg-titan-900 border border-slate-200/80 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-950 dark:hover:text-white transition-all text-xs font-semibold flex items-center gap-2 shadow-sm"
             title="Refresh dashboard telemetry"
           >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-sky-500' : ''}`} />
             <span className="hidden sm:inline">Sync Data</span>
           </button>
         </div>
@@ -162,16 +162,16 @@ export const CountryDashboard: React.FC = () => {
 
       {/* Active Crises Alert Bar (if any in round) */}
       {crises.length > 0 && (
-        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-950/40 via-titan-900/80 to-rose-950/40 border border-amber-500/30 flex items-center justify-between gap-4 flex-wrap shadow-lg">
+        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-500/30 flex items-center justify-between gap-4 flex-wrap shadow-soft-card">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40 animate-pulse">
+            <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-300 dark:border-amber-500/40 animate-pulse">
               <Flame className="w-5 h-5" />
             </div>
             <div>
-              <h4 className="font-display font-bold text-sm text-white">
+              <h4 className="font-display font-bold text-sm text-amber-950 dark:text-white">
                 Active Round Market Crisis Detected
               </h4>
-              <p className="text-xs text-slate-300">
+              <p className="text-xs text-amber-800/80 dark:text-slate-300">
                 Resource values are actively altered by geopolitical events this round.
               </p>
             </div>
@@ -186,8 +186,8 @@ export const CountryDashboard: React.FC = () => {
                   key={i}
                   className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold font-mono border ${
                     isBoom
-                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
-                      : 'bg-rose-950/80 text-rose-300 border-rose-500/40'
+                      ? 'bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-500/40'
+                      : 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-500/40'
                   }`}
                 >
                   {resName}: {c.value_modifier}x {isBoom ? '(+)' : '(-)'}
@@ -207,10 +207,10 @@ export const CountryDashboard: React.FC = () => {
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
+              <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
                 What Do I Currently Have?
               </span>
-              <h3 className="font-display font-bold text-xl text-white">
+              <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
                 National Inventory Stockpiles
               </h3>
             </div>
@@ -226,10 +226,10 @@ export const CountryDashboard: React.FC = () => {
         {/* Right 1 Col: Strategic Import Objectives */}
         <div className="space-y-4">
           <div>
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
+            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
               What Do I Need?
             </span>
-            <h3 className="font-display font-bold text-xl text-white">
+            <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
               Import Objectives
             </h3>
           </div>
@@ -242,13 +242,13 @@ export const CountryDashboard: React.FC = () => {
       </div>
 
       {/* Sovereign Trade Ledger */}
-      <div className="space-y-4 pt-4 border-t border-white/5">
+      <div className="space-y-4 pt-4 border-t border-slate-200/80 dark:border-white/5">
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 uppercase">
+            <span className="text-xs font-mono font-bold tracking-widest text-slate-500 dark:text-slate-400 uppercase">
               What Have I Traded?
             </span>
-            <h3 className="font-display font-bold text-xl text-white">
+            <h3 className="font-display font-bold text-xl text-slate-950 dark:text-white">
               Sovereign Trade Ledger
             </h3>
           </div>

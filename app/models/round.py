@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Boolean
+from sqlalchemy import Integer, Boolean, Float
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base
@@ -19,4 +19,15 @@ class Round(Base):
         Boolean,
         default=False,
         nullable=False
+    )
+
+    duration_minutes: Mapped[int | None] = mapped_column(
+        Integer,
+        default=10,
+        nullable=True
+    )
+
+    ends_at_timestamp: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True
     )

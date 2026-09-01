@@ -1,11 +1,14 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { useGameState } from '../../context/GameStateContext';
 import { StatusBadge } from '../ui/StatusBadge';
+import { RoundCountdownTimer } from '../ui/RoundCountdownTimer';
 import { Globe, LogOut, LayoutDashboard, Trophy } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 
 export const Navbar: React.FC = () => {
   const { user, role, logout } = useAuth();
+  const { activeRound } = useGameState();
   const countryDisplayName = user?.countryId ? `Country #${user.countryId}` : null;
   const navigate = useNavigate();
 
@@ -39,6 +42,11 @@ export const Navbar: React.FC = () => {
               Trading administration
             </p>
           </div>
+        </div>
+
+        {/* Global Live Round Countdown Timer */}
+        <div className="flex items-center gap-3">
+          <RoundCountdownTimer round={activeRound} compact={true} />
         </div>
 
         <nav className="hidden md:flex items-center gap-1 rounded-lg bg-titan-900 p-1">

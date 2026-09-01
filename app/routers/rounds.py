@@ -67,12 +67,15 @@ def get_rounds(
     ).all()
 
 
+import time
+
 @router.post(
     "/{round_id}/start",
     response_model=RoundResponse
 )
 def start_round(
     round_id: int,
+    duration_minutes: int = 10,
     db: Session = Depends(get_db),
     current_user: User = Depends(
         require_role("admin")
@@ -143,6 +146,8 @@ def start_round(
     # ---------------------------------------------------------
 
     round_obj.is_active = True
+    round_obj.duration_minutes = duration_minutes
+    round_obj.ends_at_timestamp = time.time() + (duration_minutes * 60)
 
     db.commit()
     db.refresh(round_obj)
@@ -205,6 +210,7 @@ def end_round(
     # ---------------------------------------------------------
 
     round_obj.is_active = False
+    round_obj.ends_at_timestamp = None
 
     db.commit()
     db.refresh(round_obj)

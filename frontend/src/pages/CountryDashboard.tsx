@@ -10,6 +10,7 @@ import { Skeleton } from '../components/ui/Skeleton';
 import { InventoryGrid } from '../components/country/InventoryGrid';
 import { ObjectivesList } from '../components/country/ObjectivesList';
 import { CountryTradeHistory } from '../components/country/CountryTradeHistory';
+import { QuotaProgressRing } from '../components/country/QuotaProgressRing';
 import { 
   DollarSign, 
   Package, 
@@ -196,6 +197,9 @@ export const CountryDashboard: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Strategic Import Quotas Progress Ring & Badges */}
+      <QuotaProgressRing objectives={objectives} getResourceName={getResourceName} />
 
       {/* Main Grid: Inventory Stockpiles & Objectives */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

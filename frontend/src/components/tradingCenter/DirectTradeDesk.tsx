@@ -13,15 +13,19 @@ import {
   AlertCircle
 } from 'lucide-react';
 
+import { CountryIntel } from '../../types/api';
+
 interface DirectTradeDeskProps {
   activeRoundId: number | undefined;
   isExecutable: boolean;
+  countriesIntel?: Record<number, CountryIntel>;
   onTradeExecuted: () => void;
 }
 
 export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
   activeRoundId,
   isExecutable,
+  countriesIntel,
   onTradeExecuted,
 }) => {
   const { countries, resources, getCountryName, getResourceName } = useGameState();
@@ -178,6 +182,37 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
                 </option>
               ))}
             </select>
+            {exportCountryId && countriesIntel?.[Number(exportCountryId)] && (
+              <div className="pt-2 border-t border-white/5 space-y-1">
+                <span className="text-[10px] font-mono font-bold tracking-wider text-slate-400 uppercase">
+                  Available Stockpiles (Click to Select):
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {countriesIntel[Number(exportCountryId)].stockpiles.length === 0 ? (
+                    <span className="text-[11px] text-slate-500 font-mono italic">No remaining stockpiles</span>
+                  ) : (
+                    countriesIntel[Number(exportCountryId)].stockpiles.map((st) => (
+                      <button
+                        key={st.resource_id}
+                        type="button"
+                        onClick={() => {
+                          setResourceId(st.resource_id);
+                          setQuantity(Math.min(st.quantity, 1000));
+                        }}
+                        className={`px-2 py-1 rounded-lg text-[11px] font-mono font-semibold border transition-all ${
+                          resourceId === st.resource_id
+                            ? 'bg-emerald-500/25 border-emerald-400 text-emerald-300 shadow-glow-emerald/20'
+                            : 'bg-white/5 border-white/10 text-slate-300 hover:border-emerald-500/40 hover:text-white'
+                        }`}
+                        title="Click to auto-populate resource"
+                      >
+                        {getResourceName(st.resource_id)}: <span className="font-bold text-white">{st.quantity.toLocaleString()}</span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Importer (Country 2) */}
@@ -203,6 +238,32 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
                 </option>
               ))}
             </select>
+
+            {importCountryId && countriesIntel?.[Number(importCountryId)] && (
+              <div className="pt-2 border-t border-white/5 space-y-1">
+                <span className="text-[10px] font-mono font-bold tracking-wider text-slate-400 uppercase">
+                  Target Quotas Needed:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {countriesIntel[Number(importCountryId)].objectives.map((obj) => {
+                    const remaining = Math.max(0, obj.required_quantity - obj.imported_quantity);
+                    const isFulfilled = remaining === 0;
+                    return (
+                      <span
+                        key={obj.resource_id}
+                        className={`px-2 py-0.5 rounded-lg text-[11px] font-mono font-semibold border ${
+                          isFulfilled
+                            ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400/80'
+                            : 'bg-cyan-500/15 border-cyan-500/40 text-cyan-300'
+                        }`}
+                      >
+                        {getResourceName(obj.resource_id)}: {isFulfilled ? '✓ Fulfilled' : `Need ${remaining.toLocaleString()} u`}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

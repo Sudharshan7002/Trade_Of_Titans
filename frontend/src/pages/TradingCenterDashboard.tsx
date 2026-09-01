@@ -183,6 +183,7 @@ export const TradingCenterDashboard: React.FC = () => {
       <DirectTradeDesk
         activeRoundId={data?.active_round?.id}
         isExecutable={isExecutable}
+        countriesIntel={data?.countries_intel}
         onTradeExecuted={fetchDashboard}
       />
 

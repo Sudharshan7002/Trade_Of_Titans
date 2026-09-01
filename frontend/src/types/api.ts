@@ -95,6 +95,8 @@ export interface Round {
   id: number;
   round_number: number;
   is_active: boolean;
+  duration_minutes?: number;
+  ends_at_timestamp?: number | null;
 }
 
 export interface Crisis {
@@ -183,6 +185,9 @@ export interface CountryDashboardData {
   active_round: {
     id: number;
     round_number: number;
+    is_active?: boolean;
+    duration_minutes?: number;
+    ends_at_timestamp?: number | null;
   } | null;
   inventory: Array<{
     resource_id: number;
@@ -210,10 +215,19 @@ export interface CountryDashboardData {
   }>;
 }
 
+export interface CountryIntel {
+  money: number;
+  stockpiles: Array<{ resource_id: number; quantity: number }>;
+  objectives: Array<{ resource_id: number; required_quantity: number; imported_quantity: number }>;
+}
+
 export interface TradingCenterDashboardData {
   active_round: {
     id: number;
     round_number: number;
+    is_active?: boolean;
+    duration_minutes?: number;
+    ends_at_timestamp?: number | null;
   } | null;
   crises: Array<{
     id?: number;
@@ -222,6 +236,7 @@ export interface TradingCenterDashboardData {
   }>;
   pending_trades: Array<Trade>;
   recent_completed_trades: Array<Trade>;
+  countries_intel?: Record<number, CountryIntel>;
 }
 
 export interface AdminDashboardData {
@@ -233,6 +248,9 @@ export interface AdminDashboardData {
   active_round: {
     id: number;
     round_number: number;
+    is_active?: boolean;
+    duration_minutes?: number;
+    ends_at_timestamp?: number | null;
   } | null;
   countries: Array<{
     id: number;

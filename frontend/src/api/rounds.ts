@@ -12,8 +12,8 @@ export const roundsApi = {
     return res.data;
   },
 
-  startRound: async (roundId: number): Promise<Round> => {
-    const res = await apiClient.post<Round>(`/rounds/${roundId}/start`);
+  startRound: async (roundId: number, durationMinutes: number = 10): Promise<Round> => {
+    const res = await apiClient.post<Round>(`/rounds/${roundId}/start?duration_minutes=${durationMinutes}`);
     return res.data;
   },
 

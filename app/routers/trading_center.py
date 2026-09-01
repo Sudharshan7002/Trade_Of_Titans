@@ -69,12 +69,13 @@ def get_trading_center_dashboard(
 
     round_data = None
     crisis_data = []
-
     if active_round:
-
         round_data = {
             "id": active_round.id,
-            "round_number": active_round.round_number
+            "round_number": active_round.round_number,
+            "is_active": active_round.is_active,
+            "duration_minutes": getattr(active_round, "duration_minutes", 10),
+            "ends_at_timestamp": getattr(active_round, "ends_at_timestamp", None),
         }
 
         crises = db.query(Crisis).filter(
@@ -160,11 +161,35 @@ def get_trading_center_dashboard(
             "status": trade.status
         })
 
+    from app.models.inventory import Inventory
+    from app.models.import_objective import ImportObjective
+
+    countries_intel = {}
+    for country in db.query(Country).all():
+        invs = db.query(Inventory).filter(Inventory.country_id == country.id).all()
+        objs = db.query(ImportObjective).filter(ImportObjective.country_id == country.id).all()
+        countries_intel[country.id] = {
+            "money": float(country.money),
+            "stockpiles": [
+                {"resource_id": inv.resource_id, "quantity": inv.quantity}
+                for inv in invs if inv.quantity > 0
+            ],
+            "objectives": [
+                {
+                    "resource_id": obj.resource_id,
+                    "required_quantity": obj.required_quantity,
+                    "imported_quantity": obj.imported_quantity,
+                }
+                for obj in objs
+            ]
+        }
+
     return {
         "active_round": round_data,
         "crises": crisis_data,
         "pending_trades": pending_trade_data,
-        "recent_completed_trades": completed_trade_data
+        "recent_completed_trades": completed_trade_data,
+        "countries_intel": countries_intel,
     }
 
 

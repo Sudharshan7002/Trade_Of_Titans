@@ -41,6 +41,15 @@ async def lifespan(_app: FastAPI):
 
         Base.metadata.create_all(bind=engine)
 
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            try:
+                conn.execute(text("ALTER TABLE rounds ADD COLUMN IF NOT EXISTS duration_minutes INTEGER DEFAULT 10"))
+                conn.execute(text("ALTER TABLE rounds ADD COLUMN IF NOT EXISTS ends_at_timestamp FLOAT"))
+                conn.commit()
+            except Exception:
+                pass
+
         db = SessionLocal()
         # Auto-seed full tournament if database has 0 countries (e.g. fresh Supabase deployment)
         from app.models.country import Country

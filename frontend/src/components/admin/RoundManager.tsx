@@ -15,6 +15,7 @@ export const RoundManager: React.FC<RoundManagerProps> = ({ onRoundAction }) => 
 
   const [isCreating, setIsCreating] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
+  const [durationMinutes, setDurationMinutes] = useState<number>(10);
 
   // Next round number calculation
   const nextRoundNumber =
@@ -37,8 +38,8 @@ export const RoundManager: React.FC<RoundManagerProps> = ({ onRoundAction }) => 
   const handleStartRound = async (roundId: number) => {
     setActionLoadingId(roundId);
     try {
-      const started = await roundsApi.startRound(roundId);
-      success('Round Commenced', `Round #${started.round_number} is now LIVE.`);
+      const started = await roundsApi.startRound(roundId, durationMinutes);
+      success('Round Commenced', `Round #${started.round_number} is now LIVE for ${durationMinutes} minutes.`);
       await refreshGameState();
       onRoundAction();
     } catch (err: any) {
@@ -72,18 +73,34 @@ export const RoundManager: React.FC<RoundManagerProps> = ({ onRoundAction }) => 
           <h3 className="font-display font-bold text-xl text-white mt-0.5">Round Management</h3>
         </div>
 
-        <button
-          onClick={handleCreateRound}
-          disabled={isCreating || gameStatus?.is_finished}
-          className="flex items-center gap-2 py-2 px-4 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/40 text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-40"
-        >
-          {isCreating ? (
-            <div className="w-3.5 h-3.5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-          ) : (
-            <Plus className="w-4 h-4" />
-          )}
-          <span>Create Round #{nextRoundNumber}</span>
-        </button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-slate-300">
+            <Clock className="w-3.5 h-3.5 text-cyan-400" />
+            <span className="font-semibold text-slate-400">Round Length:</span>
+            <input
+              type="number"
+              min={1}
+              max={60}
+              value={durationMinutes}
+              onChange={(e) => setDurationMinutes(Math.max(1, parseInt(e.target.value) || 1))}
+              className="w-14 bg-black/40 border border-cyan-500/30 rounded-lg px-2 py-1 text-center font-mono font-bold text-white focus:outline-none focus:border-cyan-400"
+            />
+            <span className="text-slate-400 font-mono">min</span>
+          </div>
+
+          <button
+            onClick={handleCreateRound}
+            disabled={isCreating || gameStatus?.is_finished}
+            className="flex items-center gap-2 py-2 px-4 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-300 border border-cyan-500/40 text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-40"
+          >
+            {isCreating ? (
+              <div className="w-3.5 h-3.5 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Plus className="w-4 h-4" />
+            )}
+            <span>Create Round #{nextRoundNumber}</span>
+          </button>
+        </div>
       </div>
 
       {allRounds.length === 0 ? (

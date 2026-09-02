@@ -31,3 +31,8 @@ class Round(Base):
         Float,
         nullable=True
     )
+
+    @property
+    def server_timestamp(self) -> float:
+        import time
+        return time.time()

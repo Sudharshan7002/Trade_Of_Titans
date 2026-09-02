@@ -158,13 +158,12 @@ COUNTRIES_DATA = [
     },
 ]
 
-EXTRA_COUNTRIES_DATA = [
-    {"name": "Standby Alpha", "username": "extra_alpha", "password": "Standby#Alpha91", "money": 300000},
-    {"name": "Standby Beta", "username": "extra_beta", "password": "Standby#Beta48", "money": 300000},
-    {"name": "Standby Gamma", "username": "extra_gamma", "password": "Standby#Gamma73", "money": 300000},
-    {"name": "Standby Delta", "username": "extra_delta", "password": "Standby#Delta26", "money": 300000},
-    {"name": "Standby Epsilon", "username": "extra_epsilon", "password": "Standby#Eps85", "money": 300000},
-]
+STANDBY_ALPHA_DATA = {
+    "name": "Standby Alpha",
+    "username": "extra_alpha",
+    "password": "Standby#Alpha91",
+    "money": 0,
+}
 
 
 def seed_tournament():
@@ -251,27 +250,30 @@ def seed_tournament():
         db.commit()
         print(f"Seeded {len(COUNTRIES_DATA)} official countries with stockpiles and quotas.")
 
-        # 4. 5 Standby / Extra Countries
-        for extra in EXTRA_COUNTRIES_DATA:
-            c = Country(
-                name=extra["name"],
-                username=extra["username"],
-                password=extra["password"],
-                money=extra["money"],
-            )
-            db.add(c)
-            db.flush()
+        # 4. Standby Alpha (Black Market - $0 balance, 10,000 units of all resources)
+        c = Country(
+            name=STANDBY_ALPHA_DATA["name"],
+            username=STANDBY_ALPHA_DATA["username"],
+            password=STANDBY_ALPHA_DATA["password"],
+            money=STANDBY_ALPHA_DATA["money"],
+        )
+        db.add(c)
+        db.flush()
 
-            u = User(
-                username=extra["username"],
-                password_hash=hash_password(extra["password"]),
-                role="country",
-                country_id=c.id,
-            )
-            db.add(u)
+        u = User(
+            username=STANDBY_ALPHA_DATA["username"],
+            password_hash=hash_password(STANDBY_ALPHA_DATA["password"]),
+            role="country",
+            country_id=c.id,
+        )
+        db.add(u)
+
+        # Allocate 10,000 units of every market resource
+        for res_name, res_id in resource_map.items():
+            db.add(Inventory(country_id=c.id, resource_id=res_id, quantity=10000))
 
         db.commit()
-        print(f"Seeded {len(EXTRA_COUNTRIES_DATA)} standby countries.")
+        print("Seeded Standby Alpha (Black Market) with $0 balance and 10,000 units of all 10 resources.")
 
         # 5. Initialize Game state
         game = Game(is_started=False, is_finished=False)

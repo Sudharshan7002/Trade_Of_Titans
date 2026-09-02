@@ -17,16 +17,18 @@ import {
   RefreshCw, 
   Layers, 
   ArrowLeftRight,
-  Flame
+  Flame,
+  RotateCcw
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
   const { gameStatus, refreshGameState } = useGameState();
-  const { error: toastError } = useToast();
+  const { success, error: toastError } = useToast();
 
   const [data, setData] = useState<AdminDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   const fetchDashboard = useCallback(async () => {
     try {
@@ -49,6 +51,26 @@ export const AdminDashboard: React.FC = () => {
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
     await Promise.all([fetchDashboard(), refreshGameState()]);
+  };
+
+  const handleResetTournament = async () => {
+    const confirmed = window.confirm(
+      "WARNING: Reset Tournament to Default Baseline?\n\n" +
+      "This will permanently purge all test trades, crises, and round data, and reset all 15 nations and Standby Alpha (Black Market) to initial state with new secure credentials.\n\n" +
+      "Click OK to execute full reset."
+    );
+    if (!confirmed) return;
+
+    setIsResetting(true);
+    try {
+      await adminApi.resetTournament();
+      success('Tournament Reset Successful', 'Database restored to clean default baseline.');
+      await Promise.all([fetchDashboard(), refreshGameState()]);
+    } catch (err: any) {
+      toastError('Reset Failed', err.message || 'Could not reset tournament');
+    } finally {
+      setIsResetting(false);
+    }
   };
 
   if (isLoading && !data) {
@@ -87,6 +109,16 @@ export const AdminDashboard: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleResetTournament}
+            disabled={isResetting}
+            className="px-4 py-2.5 rounded-2xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-600 dark:text-red-400 transition-all text-xs font-display font-extrabold flex items-center gap-2 shadow-sm disabled:opacity-50"
+            title="Reset tournament to clean default baseline"
+          >
+            <RotateCcw className={`w-4 h-4 ${isResetting ? 'animate-spin' : ''}`} />
+            <span>{isResetting ? 'Resetting...' : 'Reset Tournament'}</span>
+          </button>
+
           <button
             onClick={handleManualRefresh}
             disabled={isRefreshing}

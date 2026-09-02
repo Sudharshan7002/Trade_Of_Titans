@@ -9,6 +9,7 @@ interface RoundCountdownTimerProps {
     is_active?: boolean;
     duration_minutes?: number;
     ends_at_timestamp?: number | null;
+    server_timestamp?: number | null;
   };
   compact?: boolean;
 }
@@ -25,16 +26,28 @@ export const RoundCountdownTimer: React.FC<RoundCountdownTimerProps> = ({
       return;
     }
 
+    // Calibrate client clock against server timestamp to eliminate NTP/laptop clock skew
+    const clientNowAtReceive = Date.now() / 1000;
+    const serverSkew = round.server_timestamp
+      ? round.server_timestamp - clientNowAtReceive
+      : 0;
+
+    const maxDurationSeconds = (round.duration_minutes || 10) * 60;
+
     const updateTimer = () => {
-      const now = Date.now() / 1000;
-      const diff = Math.max(0, Math.floor(round.ends_at_timestamp! - now));
+      const now = Date.now() / 1000 + serverSkew;
+      // Clamp between 0 and max duration so timer never starts at 10:02 when set to 10:00
+      const diff = Math.max(
+        0,
+        Math.min(maxDurationSeconds, Math.floor(round.ends_at_timestamp! - now))
+      );
       setSecondsLeft(diff);
     };
 
     updateTimer();
     const interval = setInterval(updateTimer, 1000);
     return () => clearInterval(interval);
-  }, [round?.ends_at_timestamp]);
+  }, [round?.ends_at_timestamp, round?.server_timestamp, round?.duration_minutes]);
 
   if (!round || !round.is_active || secondsLeft === null) {
     if (compact) {

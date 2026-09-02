@@ -97,6 +97,7 @@ export interface Round {
   is_active: boolean;
   duration_minutes?: number;
   ends_at_timestamp?: number | null;
+  server_timestamp?: number | null;
 }
 
 export interface Crisis {
@@ -188,6 +189,7 @@ export interface CountryDashboardData {
     is_active?: boolean;
     duration_minutes?: number;
     ends_at_timestamp?: number | null;
+    server_timestamp?: number | null;
   } | null;
   inventory: Array<{
     resource_id: number;
@@ -228,6 +230,7 @@ export interface TradingCenterDashboardData {
     is_active?: boolean;
     duration_minutes?: number;
     ends_at_timestamp?: number | null;
+    server_timestamp?: number | null;
   } | null;
   crises: Array<{
     id?: number;
@@ -251,6 +254,7 @@ export interface AdminDashboardData {
     is_active?: boolean;
     duration_minutes?: number;
     ends_at_timestamp?: number | null;
+    server_timestamp?: number | null;
   } | null;
   countries: Array<{
     id: number;

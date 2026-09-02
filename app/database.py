@@ -22,6 +22,15 @@ if DATABASE_URL.startswith("sqlite"):
     engine_options["connect_args"] = {"check_same_thread": False}
     if DATABASE_URL == "sqlite://":
         engine_options["poolclass"] = StaticPool
+else:
+    # High-concurrency pool configuration for PostgreSQL (supports 15-25 concurrent delegates)
+    engine_options.update({
+        "pool_size": 20,
+        "max_overflow": 20,
+        "pool_timeout": 15,
+        "pool_recycle": 1800,
+        "pool_pre_ping": True,
+    })
 
 engine = create_engine(DATABASE_URL, **engine_options)
 

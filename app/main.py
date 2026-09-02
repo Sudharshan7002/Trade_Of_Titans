@@ -51,11 +51,17 @@ async def lifespan(_app: FastAPI):
                 pass
 
         db = SessionLocal()
-        # Auto-seed full tournament if database has 0 countries (e.g. fresh Supabase deployment)
         from app.models.country import Country
-        if db.query(Country).count() == 0:
+
+        # Auto-seed if empty, if obsolete standby countries from previous test runs exist, or if forced
+        needs_seed = (
+            db.query(Country).count() == 0
+            or db.query(Country).filter(Country.username == "extra_beta").first() is not None
+            or os.getenv("FORCE_RESET_DATABASE", "").lower() in ("true", "1", "yes")
+        )
+        if needs_seed:
             from app.seed_tournament import seed_tournament
-            print("Fresh database detected: Bootstrapping official tournament data...")
+            print("Auto-resetting tournament database to clean official baseline...")
             seed_tournament()
         else:
             for username, password, role in DEFAULT_USERS:

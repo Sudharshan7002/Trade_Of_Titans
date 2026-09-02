@@ -76,6 +76,7 @@ def get_trading_center_dashboard(
             "is_active": active_round.is_active,
             "duration_minutes": getattr(active_round, "duration_minutes", 10),
             "ends_at_timestamp": getattr(active_round, "ends_at_timestamp", None),
+            "server_timestamp": time.time(),
         }
 
         crises = db.query(Crisis).filter(
@@ -163,25 +164,30 @@ def get_trading_center_dashboard(
 
     from app.models.inventory import Inventory
     from app.models.import_objective import ImportObjective
+    from collections import defaultdict
+
+    all_countries = db.query(Country).all()
+    all_inventories = db.query(Inventory).filter(Inventory.quantity > 0).all()
+    all_objectives = db.query(ImportObjective).all()
+
+    inv_map = defaultdict(list)
+    for inv in all_inventories:
+        inv_map[inv.country_id].append({"resource_id": inv.resource_id, "quantity": inv.quantity})
+
+    obj_map = defaultdict(list)
+    for obj in all_objectives:
+        obj_map[obj.country_id].append({
+            "resource_id": obj.resource_id,
+            "required_quantity": obj.required_quantity,
+            "imported_quantity": obj.imported_quantity,
+        })
 
     countries_intel = {}
-    for country in db.query(Country).all():
-        invs = db.query(Inventory).filter(Inventory.country_id == country.id).all()
-        objs = db.query(ImportObjective).filter(ImportObjective.country_id == country.id).all()
+    for country in all_countries:
         countries_intel[country.id] = {
             "money": float(country.money),
-            "stockpiles": [
-                {"resource_id": inv.resource_id, "quantity": inv.quantity}
-                for inv in invs if inv.quantity > 0
-            ],
-            "objectives": [
-                {
-                    "resource_id": obj.resource_id,
-                    "required_quantity": obj.required_quantity,
-                    "imported_quantity": obj.imported_quantity,
-                }
-                for obj in objs
-            ]
+            "stockpiles": inv_map.get(country.id, []),
+            "objectives": obj_map.get(country.id, []),
         }
 
     return {

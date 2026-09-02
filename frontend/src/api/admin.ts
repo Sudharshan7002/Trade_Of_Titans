@@ -18,4 +18,9 @@ export const adminApi = {
     const res = await apiClient.get('/objectives/');
     return res.data;
   },
+
+  resetTournament: async () => {
+    const res = await apiClient.post('/admin-dashboard/reset-tournament');
+    return res.data;
+  },
 };

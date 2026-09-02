@@ -77,9 +77,25 @@ export const GameStateProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     refreshReferenceData();
     refreshGameState();
 
-    // Gentle polling every 20 seconds if authenticated to catch round flips
-    const interval = setInterval(refreshGameState, 20000);
-    return () => clearInterval(interval);
+    // Gentle polling every 20 seconds if active, paused when tab is in background
+    const interval = setInterval(() => {
+      if (!document.hidden) {
+        refreshGameState();
+      }
+    }, 20000);
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        refreshGameState();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, [isAuthenticated, refreshGameState, refreshReferenceData]);
 
   const countriesMap = React.useMemo(() => {

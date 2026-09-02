@@ -151,10 +151,14 @@ def get_country_dashboard(
     crisis_data = []
 
     if active_round:
-
+        import time
         active_round_data = {
             "id": active_round.id,
-            "round_number": active_round.round_number
+            "round_number": active_round.round_number,
+            "is_active": active_round.is_active,
+            "duration_minutes": getattr(active_round, "duration_minutes", 10),
+            "ends_at_timestamp": getattr(active_round, "ends_at_timestamp", None),
+            "server_timestamp": time.time(),
         }
 
         # -----------------------------------------------------

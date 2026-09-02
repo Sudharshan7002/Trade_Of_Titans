@@ -53,10 +53,14 @@ def get_admin_dashboard(
     crisis_data = []
 
     if active_round:
-
+        import time
         round_data = {
             "id": active_round.id,
-            "round_number": active_round.round_number
+            "round_number": active_round.round_number,
+            "is_active": active_round.is_active,
+            "duration_minutes": getattr(active_round, "duration_minutes", 10),
+            "ends_at_timestamp": getattr(active_round, "ends_at_timestamp", None),
+            "server_timestamp": time.time(),
         }
 
         crises = db.query(Crisis).filter(
@@ -121,3 +125,14 @@ def get_admin_dashboard(
         "crises": crisis_data,
         "pending_trades": pending_trade_data
     }
+
+
+@router.post("/reset-tournament")
+def reset_tournament(
+    current_user: User = Depends(
+        require_role("admin")
+    ),
+):
+    from app.seed_tournament import seed_tournament
+    seed_tournament()
+    return {"message": "Tournament database successfully reset to clean default baseline"}

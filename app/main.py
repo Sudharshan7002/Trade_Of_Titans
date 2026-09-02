@@ -100,6 +100,12 @@ app.add_middleware(
     max_age=86400,
 )
 
+
+@app.get("/version")
+def get_version():
+    return {"version": "2.1", "status": "online"}
+
+
 app.include_router(countries.router)
 app.include_router(resources.router)
 app.include_router(inventory.router)

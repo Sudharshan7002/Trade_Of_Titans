@@ -202,6 +202,33 @@ def get_country_dashboard(
         })
 
     # ---------------------------------------------------------
+    # TRADE ELIGIBILITY (1 IMPORT & 1 EXPORT PER ROUND)
+    # ---------------------------------------------------------
+
+    has_exported = False
+    has_imported = False
+    if active_round:
+        has_exported = db.query(Trade).filter(
+            Trade.round_id == active_round.id,
+            Trade.export_country_id == country.id,
+            Trade.status == "completed"
+        ).first() is not None
+        has_imported = db.query(Trade).filter(
+            Trade.round_id == active_round.id,
+            Trade.import_country_id == country.id,
+            Trade.status == "completed"
+        ).first() is not None
+
+    is_black_market = (country.username == "extra_alpha")
+    trade_eligibility = {
+        "can_export": is_black_market or not has_exported,
+        "can_import": is_black_market or not has_imported,
+        "exported": has_exported,
+        "imported": has_imported,
+        "is_black_market": is_black_market,
+    }
+
+    # ---------------------------------------------------------
     # FINAL RESPONSE
     # ---------------------------------------------------------
 
@@ -220,5 +247,7 @@ def get_country_dashboard(
 
         "crises": crisis_data,
 
-        "trades": trade_data
+        "trades": trade_data,
+
+        "trade_eligibility": trade_eligibility,
     }

@@ -23,6 +23,7 @@ def execute_trade(
     payment_resource_id: int | None = None,
     payment_quantity: int | None = None,
     existing_trade: Trade | None = None,
+    override_limits: bool = False,
 ):
     # ---------- BASIC VALIDATION ----------
 
@@ -76,6 +77,38 @@ def execute_trade(
             status_code=404,
             detail="Country not found"
         )
+
+    # ---------- CHECK ROUND TRADE LIMITS (1 IMPORT & 1 EXPORT PER ROUND) ----------
+    if not override_limits:
+        # Exporter limit check (Standby Alpha / extra_alpha is exempt)
+        if exporter.username != "extra_alpha":
+            existing_export_query = db.query(Trade).filter(
+                Trade.round_id == round_id,
+                Trade.export_country_id == export_country_id,
+                Trade.status == "completed",
+            )
+            if existing_trade:
+                existing_export_query = existing_export_query.filter(Trade.id != existing_trade.id)
+            if existing_export_query.first():
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"{exporter.name} has already exported a resource in Round {round_obj.round_number}"
+                )
+
+        # Importer limit check (Standby Alpha / extra_alpha is exempt)
+        if importer.username != "extra_alpha":
+            existing_import_query = db.query(Trade).filter(
+                Trade.round_id == round_id,
+                Trade.import_country_id == import_country_id,
+                Trade.status == "completed",
+            )
+            if existing_trade:
+                existing_import_query = existing_import_query.filter(Trade.id != existing_trade.id)
+            if existing_import_query.first():
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"{importer.name} has already imported a resource in Round {round_obj.round_number}"
+                )
 
     # ---------- CHECK RESOURCE ----------
 

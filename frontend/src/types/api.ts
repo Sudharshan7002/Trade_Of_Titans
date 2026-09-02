@@ -215,12 +215,22 @@ export interface CountryDashboardData {
     trade_type: TradeType;
     status: TradeStatus;
   }>;
+  trade_eligibility?: TradeEligibility;
+}
+
+export interface TradeEligibility {
+  can_export: boolean;
+  can_import: boolean;
+  exported: boolean;
+  imported: boolean;
+  is_black_market?: boolean;
 }
 
 export interface CountryIntel {
   money: number;
   stockpiles: Array<{ resource_id: number; quantity: number }>;
   objectives: Array<{ resource_id: number; required_quantity: number; imported_quantity: number }>;
+  trade_eligibility?: TradeEligibility;
 }
 
 export interface TradingCenterDashboardData {
@@ -280,5 +290,6 @@ export interface DirectTradeCreate {
   trade_type: 'money' | 'resource';
   payment_resource_id?: number | null;
   payment_quantity?: number | null;
+  override_limits?: boolean;
 }
 

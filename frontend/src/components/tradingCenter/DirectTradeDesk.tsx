@@ -39,9 +39,51 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
   const [unitPrice, setUnitPrice] = useState<number>(10);
   const [paymentResourceId, setPaymentResourceId] = useState<number | ''>('');
   const [paymentQuantity, setPaymentQuantity] = useState<number>(1);
+  const [overrideLimits, setOverrideLimits] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const totalMoney = quantity * (unitPrice || 0);
+
+  const getExporterEligibility = (cId: number) => {
+    const c = countries.find((item) => item.id === cId);
+    if (!c) return { canExport: true, isBlackMarket: false, label: '' };
+    const intel = countriesIntel?.[cId];
+    const isBlackMarket = intel?.trade_eligibility?.is_black_market || c.name === 'Standby Alpha';
+    const canExport = isBlackMarket || (intel?.trade_eligibility ? intel.trade_eligibility.can_export : true);
+    return {
+      canExport,
+      isBlackMarket,
+      label: isBlackMarket
+        ? `${c.name} ★ (Black Market - Unlimited)`
+        : canExport
+        ? `${c.name} (🟢 Ready - $${Number(c.money).toLocaleString()})`
+        : `${c.name} (✓ Export Used - $${Number(c.money).toLocaleString()})`,
+    };
+  };
+
+  const getImporterEligibility = (cId: number) => {
+    const c = countries.find((item) => item.id === cId);
+    if (!c) return { canImport: true, isBlackMarket: false, label: '' };
+    const intel = countriesIntel?.[cId];
+    const isBlackMarket = intel?.trade_eligibility?.is_black_market || c.name === 'Standby Alpha';
+    const canImport = isBlackMarket || (intel?.trade_eligibility ? intel.trade_eligibility.can_import : true);
+    return {
+      canImport,
+      isBlackMarket,
+      label: isBlackMarket
+        ? `${c.name} ★ (Black Market - Unlimited)`
+        : canImport
+        ? `${c.name} (🟢 Ready - $${Number(c.money).toLocaleString()})`
+        : `${c.name} (✓ Import Used - $${Number(c.money).toLocaleString()})`,
+    };
+  };
+
+  const selectedExporterInfo = exportCountryId ? getExporterEligibility(Number(exportCountryId)) : null;
+  const selectedImporterInfo = importCountryId ? getImporterEligibility(Number(importCountryId)) : null;
+  const hasLimitConflict = Boolean(
+    (selectedExporterInfo && !selectedExporterInfo.canExport) ||
+    (selectedImporterInfo && !selectedImporterInfo.canImport)
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +100,14 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
 
     if (exportCountryId === importCountryId) {
       toastError('Invalid Countries', 'Exporter and Importer cannot be the same sovereign state.');
+      return;
+    }
+
+    if (hasLimitConflict && !overrideLimits) {
+      toastError(
+        'Round Trade Limit Reached',
+        'One of the selected countries has already used its quota for this round. Enable Referee Override if authorized.'
+      );
       return;
     }
 
@@ -94,6 +144,7 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
         trade_type: tradeType,
         payment_resource_id: tradeType === 'resource' ? Number(paymentResourceId) : null,
         payment_quantity: tradeType === 'resource' ? Number(paymentQuantity) : null,
+        override_limits: overrideLimits,
       };
 
       const res = await tradingCenterApi.executeDirectTrade(payload);
@@ -102,9 +153,10 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
         `Trade #${res.trade_id} between ${getCountryName(Number(exportCountryId))} and ${getCountryName(Number(importCountryId))} is complete.`
       );
 
-      // Reset quantities
+      // Reset quantities and override
       setQuantity(1);
       setPaymentQuantity(1);
+      setOverrideLimits(false);
       onTradeExecuted();
     } catch (err: any) {
       toastError('Trade Execution Rejected', err.message || 'Transaction could not be completed.');
@@ -161,9 +213,24 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
           {/* Exporter (Country 1) */}
           <div className="p-5 rounded-2xl bg-neutral-50 dark:bg-[#181818] border border-neutral-200/90 dark:border-white/10 space-y-3">
-            <label className="block text-xs font-mono font-bold tracking-wider text-black dark:text-[#CCFF00] uppercase">
-              // 01 Exporter (Seller)
-            </label>
+            <div className="flex items-center justify-between gap-2">
+              <label className="block text-xs font-mono font-bold tracking-wider text-black dark:text-[#CCFF00] uppercase">
+                // 01 Exporter (Seller)
+              </label>
+              {countries.some((c) => c.name === 'Standby Alpha') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const alpha = countries.find((c) => c.name === 'Standby Alpha');
+                    if (alpha) setExportCountryId(alpha.id);
+                  }}
+                  className="px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-[#FF5533]/15 hover:bg-[#FF5533]/25 text-[#FF5533] border border-[#FF5533]/30 transition-all flex items-center gap-1"
+                  title="Quick-select Standby Alpha as Black Market supplier"
+                >
+                  <span>★ Black Market</span>
+                </button>
+              )}
+            </div>
             <select
               value={exportCountryId}
               onChange={(e) => setExportCountryId(e.target.value ? Number(e.target.value) : '')}
@@ -171,16 +238,19 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
               required
             >
               <option value="" className="bg-white dark:bg-[#0A0A0A]">Select Exporter Country...</option>
-              {countries.map((c) => (
-                <option
-                  key={c.id}
-                  value={c.id}
-                  disabled={c.id === importCountryId}
-                  className="bg-white dark:bg-[#0A0A0A]"
-                >
-                  {c.name} (Balance: ${Number(c.money).toLocaleString()})
-                </option>
-              ))}
+              {countries.map((c) => {
+                const el = getExporterEligibility(c.id);
+                return (
+                  <option
+                    key={c.id}
+                    value={c.id}
+                    disabled={c.id === importCountryId}
+                    className="bg-white dark:bg-[#0A0A0A]"
+                  >
+                    {el.label}
+                  </option>
+                );
+              })}
             </select>
             {exportCountryId && countriesIntel?.[Number(exportCountryId)] && (
               <div className="pt-2 border-t border-neutral-200/60 dark:border-white/5 space-y-1">
@@ -227,16 +297,19 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
               required
             >
               <option value="" className="bg-white dark:bg-[#0A0A0A]">Select Importer Country...</option>
-              {countries.map((c) => (
-                <option
-                  key={c.id}
-                  value={c.id}
-                  disabled={c.id === exportCountryId}
-                  className="bg-white dark:bg-[#0A0A0A]"
-                >
-                  {c.name} (Balance: ${Number(c.money).toLocaleString()})
-                </option>
-              ))}
+              {countries.map((c) => {
+                const el = getImporterEligibility(c.id);
+                return (
+                  <option
+                    key={c.id}
+                    value={c.id}
+                    disabled={c.id === exportCountryId}
+                    className="bg-white dark:bg-[#0A0A0A]"
+                  >
+                    {el.label}
+                  </option>
+                );
+              })}
             </select>
 
             {importCountryId && countriesIntel?.[Number(importCountryId)] && (
@@ -266,6 +339,38 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
             )}
           </div>
         </div>
+
+        {/* Turn Limit Warning & Referee Override Banner */}
+        {hasLimitConflict && (
+          <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-4 flex-wrap text-xs text-amber-700 dark:text-amber-400 shadow-sm">
+            <div className="flex items-center gap-2.5">
+              <AlertCircle className="w-5 h-5 shrink-0 text-amber-500" />
+              <div>
+                <strong className="font-bold uppercase tracking-wider">Round Quota Alert: </strong>
+                {selectedExporterInfo && !selectedExporterInfo.canExport && (
+                  <span>
+                    <strong>{getCountryName(Number(exportCountryId))}</strong> has already exported this round.
+                  </span>
+                )}
+                {selectedImporterInfo && !selectedImporterInfo.canImport && (
+                  <span className="ml-1">
+                    <strong>{getCountryName(Number(importCountryId))}</strong> has already imported this round.
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <label className="flex items-center gap-2 font-display font-bold cursor-pointer text-amber-800 dark:text-amber-300 bg-amber-500/20 px-3 py-1.5 rounded-xl border border-amber-500/40 hover:bg-amber-500/30 transition-all">
+              <input
+                type="checkbox"
+                checked={overrideLimits}
+                onChange={(e) => setOverrideLimits(e.target.checked)}
+                className="w-4 h-4 accent-amber-500 rounded"
+              />
+              <span>Referee Override (Permit Deal)</span>
+            </label>
+          </div>
+        )}
 
         {/* Commodity & Terms Row */}
         <div className="p-5 rounded-2xl bg-neutral-50 dark:bg-[#181818] border border-neutral-200/90 dark:border-white/10 space-y-4">
@@ -399,7 +504,7 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
         <div className="flex items-center justify-end gap-3">
           <button
             type="submit"
-            disabled={isSubmitting || !isExecutable}
+            disabled={isSubmitting || !isExecutable || (hasLimitConflict && !overrideLimits)}
             className="w-full sm:w-auto py-3.5 px-8 rounded-2xl bg-[#CCFF00] hover:bg-[#B8E600] text-black font-display font-extrabold text-sm uppercase tracking-wider shadow-glow-lime transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
@@ -407,7 +512,11 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
             ) : (
               <CheckCircle2 className="w-4 h-4 text-black" />
             )}
-            <span>Execute Trade Immediately</span>
+            <span>
+              {hasLimitConflict && !overrideLimits
+                ? 'Quota Limit Reached (Enable Override)'
+                : 'Execute Trade Immediately'}
+            </span>
           </button>
         </div>
 

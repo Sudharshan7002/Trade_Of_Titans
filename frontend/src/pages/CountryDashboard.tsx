@@ -108,6 +108,55 @@ export const CountryDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Round Turn Status Telemetry */}
+      {data?.active_round && data?.trade_eligibility && (
+        <div className="p-4 rounded-2xl bg-neutral-100 dark:bg-[#151515] border border-neutral-200/90 dark:border-white/10 flex items-center justify-between gap-4 flex-wrap text-xs shadow-sm">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-neutral-500 uppercase font-bold tracking-wider">
+              // Round #{data.active_round.round_number} Trading Quotas:
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Export Turn */}
+            <div
+              className={`px-3 py-1.5 rounded-xl font-display font-bold text-xs flex items-center gap-1.5 border ${
+                data.trade_eligibility.can_export
+                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                  : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-500 border-neutral-300 dark:border-white/10'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  data.trade_eligibility.can_export ? 'bg-emerald-500 animate-pulse' : 'bg-neutral-400'
+                }`}
+              />
+              <span>
+                Export Quota: {data.trade_eligibility.can_export ? 'Available (1/1)' : 'Completed (0/1) ✓'}
+              </span>
+            </div>
+
+            {/* Import Turn */}
+            <div
+              className={`px-3 py-1.5 rounded-xl font-display font-bold text-xs flex items-center gap-1.5 border ${
+                data.trade_eligibility.can_import
+                  ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                  : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-500 border-neutral-300 dark:border-white/10'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  data.trade_eligibility.can_import ? 'bg-emerald-500 animate-pulse' : 'bg-neutral-400'
+                }`}
+              />
+              <span>
+                Import Quota: {data.trade_eligibility.can_import ? 'Available (1/1)' : 'Completed (0/1) ✓'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Primary Financial & Round Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Treasury Reserves */}

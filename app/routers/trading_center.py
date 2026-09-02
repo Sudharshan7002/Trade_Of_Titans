@@ -1,3 +1,4 @@
+import time
 from decimal import Decimal
 from pydantic import BaseModel
 from fastapi import APIRouter, Depends
@@ -170,6 +171,18 @@ def get_trading_center_dashboard(
     all_inventories = db.query(Inventory).filter(Inventory.quantity > 0).all()
     all_objectives = db.query(ImportObjective).all()
 
+    # Track who has completed export or import in this round
+    round_exported_countries = set()
+    round_imported_countries = set()
+    if active_round:
+        round_trades = db.query(Trade).filter(
+            Trade.round_id == active_round.id,
+            Trade.status == "completed"
+        ).all()
+        for t in round_trades:
+            round_exported_countries.add(t.export_country_id)
+            round_imported_countries.add(t.import_country_id)
+
     inv_map = defaultdict(list)
     for inv in all_inventories:
         inv_map[inv.country_id].append({"resource_id": inv.resource_id, "quantity": inv.quantity})
@@ -184,10 +197,21 @@ def get_trading_center_dashboard(
 
     countries_intel = {}
     for country in all_countries:
+        is_black_market = (country.username == "extra_alpha")
+        has_exported = country.id in round_exported_countries
+        has_imported = country.id in round_imported_countries
+
         countries_intel[country.id] = {
             "money": float(country.money),
             "stockpiles": inv_map.get(country.id, []),
             "objectives": obj_map.get(country.id, []),
+            "trade_eligibility": {
+                "can_export": is_black_market or not has_exported,
+                "can_import": is_black_market or not has_imported,
+                "exported": has_exported,
+                "imported": has_imported,
+                "is_black_market": is_black_market,
+            }
         }
 
     return {
@@ -209,6 +233,7 @@ class DirectTradeCreate(BaseModel):
     trade_type: str = "money"
     payment_resource_id: int | None = None
     payment_quantity: int | None = None
+    override_limits: bool = False
 
 
 @router.post("/execute-trade")
@@ -230,6 +255,7 @@ def execute_direct_trade(
         trade_type=data.trade_type,
         payment_resource_id=data.payment_resource_id,
         payment_quantity=data.payment_quantity,
+        override_limits=data.override_limits,
     )
 
     return {

@@ -107,7 +107,8 @@ def test_admin_country_trade_confirmation_flow():
                 "resource_id": resource_id,
                 "quantity": 2,
                 "price": 20,
-                "trade_type": "money"
+                "trade_type": "money",
+                "override_limits": True
             }
         )
         assert direct_money_trade.status_code == 200, direct_money_trade.text

@@ -173,17 +173,23 @@ def seed_tournament():
 
     try:
         print("Cleaning previous tournament data...")
-        db.query(FinalRanking).delete()
-        db.query(Trade).delete()
-        db.query(Crisis).delete()
-        db.query(ImportObjective).delete()
-        db.query(Inventory).delete()
-        db.query(Round).delete()
-        db.query(Country).delete()
-        db.query(Resource).delete()
-        db.query(Game).delete()
-        db.query(User).delete()
-        db.commit()
+        if engine.dialect.name == "postgresql":
+            with engine.connect() as conn:
+                from sqlalchemy import text
+                conn.execute(text("TRUNCATE TABLE final_rankings, trades, crises, import_objectives, inventories, rounds, users, countries, resources, games RESTART IDENTITY CASCADE;"))
+                conn.commit()
+        else:
+            db.query(FinalRanking).delete()
+            db.query(Trade).delete()
+            db.query(Crisis).delete()
+            db.query(ImportObjective).delete()
+            db.query(Inventory).delete()
+            db.query(User).delete()
+            db.query(Round).delete()
+            db.query(Country).delete()
+            db.query(Resource).delete()
+            db.query(Game).delete()
+            db.commit()
 
         # 1. Operators
         admin_pass = os.getenv("ADMIN_PASSWORD", "admin123")

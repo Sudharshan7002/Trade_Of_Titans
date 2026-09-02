@@ -30,12 +30,16 @@ export const AdminDashboard: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
-  const fetchDashboard = useCallback(async () => {
+  const fetchDashboard = useCallback(async (isManual = false) => {
     try {
       const res = await adminApi.getDashboard();
       setData(res);
     } catch (err: any) {
-      toastError('Failed to Load Admin Telemetry', err.message);
+      if (isManual) {
+        toastError('Failed to Load Admin Telemetry', err.message);
+      } else {
+        console.warn('Background admin telemetry sync notice:', err.message);
+      }
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -43,14 +47,18 @@ export const AdminDashboard: React.FC = () => {
   }, [toastError]);
 
   useEffect(() => {
-    fetchDashboard();
-    const interval = setInterval(fetchDashboard, 15000);
+    fetchDashboard(false);
+    const interval = setInterval(() => {
+      if (!document.hidden) {
+        fetchDashboard(false);
+      }
+    }, 15000);
     return () => clearInterval(interval);
   }, [fetchDashboard]);
 
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
-    await Promise.all([fetchDashboard(), refreshGameState()]);
+    await Promise.all([fetchDashboard(true), refreshGameState()]);
   };
 
   const handleResetTournament = async () => {

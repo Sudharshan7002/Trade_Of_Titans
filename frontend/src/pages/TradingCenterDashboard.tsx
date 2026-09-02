@@ -26,12 +26,16 @@ export const TradingCenterDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const fetchDashboard = useCallback(async () => {
+  const fetchDashboard = useCallback(async (isManual = false) => {
     try {
       const res = await tradingCenterApi.getDashboard();
       setData(res);
     } catch (err: any) {
-      toastError('Failed to Load Trading Floor Telemetry', err.message);
+      if (isManual) {
+        toastError('Failed to Load Trading Floor Telemetry', err.message);
+      } else {
+        console.warn('Background telemetry sync notice:', err.message);
+      }
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
@@ -39,14 +43,18 @@ export const TradingCenterDashboard: React.FC = () => {
   }, [toastError]);
 
   useEffect(() => {
-    fetchDashboard();
-    const interval = setInterval(fetchDashboard, 15000);
+    fetchDashboard(false);
+    const interval = setInterval(() => {
+      if (!document.hidden) {
+        fetchDashboard(false);
+      }
+    }, 15000);
     return () => clearInterval(interval);
   }, [fetchDashboard]);
 
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
-    await Promise.all([fetchDashboard(), refreshGameState()]);
+    await Promise.all([fetchDashboard(true), refreshGameState()]);
   };
 
   const isExecutable =

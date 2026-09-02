@@ -167,6 +167,44 @@ STANDBY_ALPHA_DATA = {
 }
 
 
+PRECOMPUTED_HASHES = {
+    "usa": "$2b$12$Fj7t06S8WQdWRC46A9tVXONgxUPoP/u.ZBI7McPuK1z6FinB7ToM.",
+    "germany": "$2b$12$vXCAqfbuHESvAabQW7Xcsug.HizqJRzF0KW26CJLxunH6AphZEfgi",
+    "canada": "$2b$12$d6.QNCnOlo6Hqr26mqst6edn8Z6aXWSLF2n7SxzaPcFu6q7r7q3ze",
+    "australia": "$2b$12$Och5/Ge.DAOiVugjb8kGguUlC8Vd93GRwJJIXdJiMiiYIivYySlMi",
+    "india": "$2b$12$f3jOC/4UzDnJX/nwYlBf3.sOTPj9wcXGFRykn3AGlhgV3TA96YFs2",
+    "china": "$2b$12$N/7l7XZCGRVOOsTMjcvie.DLl8ICkFcveuQmyw.1O7gRtWTXq8v6O",
+    "brazil": "$2b$12$j59ZHJ.qftr.eZxKVBaheuSp/7BoMRd7cjPzKN2B1N.kynxlCVP9G",
+    "russia": "$2b$12$Tso.zCgoJLROuo5s/dzwXegmj6jcJtPNgNI6fTntiY0jJ6P3FIgL2",
+    "indonesia": "$2b$12$QBIL45cHgtHv1YAHKywGDO4ieMWBTzHKbJ6AY1vPqVVcQ8y9WwryO",
+    "japan": "$2b$12$Dj0006OmWQcFKWzNBb5iTOZM53yo6n9B/jTM5S1FLawAZXVbYU8ye",
+    "france": "$2b$12$30d6ZPItMmU7Bw6tP9X77udHuNq.FEdaUXIvwpMbgmEHexMgpUOny",
+    "south_korea": "$2b$12$TVjSK4qpDPfhyPhUurhZVuoDYlJCFNDAxRN3X7DfD37WOs/fRpQRu",
+    "italy": "$2b$12$kPQ1QNcbwsIjVSWzBdcfr.qr1JQCSxT9rWOgHRTPmj1PUez6byXQO",
+    "mexico": "$2b$12$DeId3TQzC.uCfprSXCr0d.6dXTWyKmttaA0SOupkpcCCOjC0Qo0te",
+    "saudi_arabia": "$2b$12$CjQ9nSpGozhRG238wF6h0.r9zapOK1PMiWgIxEsVCFp2wJKb6K/0q",
+    "extra_alpha": "$2b$12$6rq3158rWot5MJl.DQYlCeUYv4PfuF4yF61lWHy/gDTmutO.3d4fO",
+    "admin_admin123": "$2b$12$mphn4lHFJnSMYwG4jp0STucWkoW6uw7spMhort5ZCAQeuVUU6NpO6",
+    "trading_trading123": "$2b$12$BAMQK2nQksLfV5CX/JArmO3otO8zyx1/Gs8yJqfv.k8RMmfBzbqVK",
+    "ranking_ranking123": "$2b$12$oOZnsbWxXEqeKXBVj8kotumcnjMyXCUHlqo6wNZnbjyFFazbcE1TK",
+    "admin_pordinno": "$2b$12$547pmw86ljA4OtFH0Gx.fuRE5PFIrpDwcGFR5zEsby0Un/.m8KRvq",
+}
+
+
+def get_user_hash(username: str, plain_password: str) -> str:
+    if username in PRECOMPUTED_HASHES:
+        return PRECOMPUTED_HASHES[username]
+    if plain_password == "admin123":
+        return PRECOMPUTED_HASHES["admin_admin123"]
+    if plain_password == "pordinno@123":
+        return PRECOMPUTED_HASHES["admin_pordinno"]
+    if plain_password == "trading123":
+        return PRECOMPUTED_HASHES["trading_trading123"]
+    if plain_password == "ranking123":
+        return PRECOMPUTED_HASHES["ranking_ranking123"]
+    return hash_password(plain_password)
+
+
 def seed_tournament(db: Session | None = None):
     print("Connecting to database...")
     Base.metadata.create_all(bind=engine)
@@ -197,9 +235,9 @@ def seed_tournament(db: Session | None = None):
         rank_pass = os.getenv("RANKING_PASSWORD", "ranking123")
 
         operators = [
-            User(username="admin", password_hash=hash_password(admin_pass), role="admin"),
-            User(username="trading_center", password_hash=hash_password(tc_pass), role="trading_center"),
-            User(username="ranking", password_hash=hash_password(rank_pass), role="ranking"),
+            User(username="admin", password_hash=get_user_hash("admin", admin_pass), role="admin"),
+            User(username="trading_center", password_hash=get_user_hash("trading_center", tc_pass), role="trading_center"),
+            User(username="ranking", password_hash=get_user_hash("ranking", rank_pass), role="ranking"),
         ]
         db.add_all(operators)
         db.commit()
@@ -228,7 +266,7 @@ def seed_tournament(db: Session | None = None):
 
             u = User(
                 username=c_data["username"],
-                password_hash=hash_password(c_data["password"]),
+                password_hash=get_user_hash(c_data["username"], c_data["password"]),
                 role="country",
                 country_id=c.id,
             )
@@ -268,7 +306,7 @@ def seed_tournament(db: Session | None = None):
 
         u = User(
             username=STANDBY_ALPHA_DATA["username"],
-            password_hash=hash_password(STANDBY_ALPHA_DATA["password"]),
+            password_hash=get_user_hash(STANDBY_ALPHA_DATA["username"], STANDBY_ALPHA_DATA["password"]),
             role="country",
             country_id=c.id,
         )

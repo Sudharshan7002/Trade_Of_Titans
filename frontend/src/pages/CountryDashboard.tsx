@@ -138,6 +138,60 @@ export const CountryDashboard: React.FC = () => {
         </div>
       </div>
 
+      {/* Sovereign Spotlight: Host Nation Card */}
+      {data?.active_round && data?.spotlight && data.spotlight.is_host && (
+        <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-amber-600/20 border-2 border-amber-400/50 dark:border-amber-400/40 shadow-sm relative overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="px-3 py-1 rounded-full text-[11px] font-mono font-black uppercase tracking-wider bg-amber-400 text-black shadow-sm">
+                  ⭐ Round #{data.active_round.round_number} Global Host Nation
+                </span>
+                <span className="text-xs font-mono font-bold text-amber-800 dark:text-amber-300">
+                  // {data.spotlight.title}
+                </span>
+              </div>
+              <h3 className="font-display font-black text-xl sm:text-2xl text-black dark:text-white">
+                Your Sovereign Spotlight is Active
+              </h3>
+              <p className="text-sm text-neutral-800 dark:text-neutral-200 font-medium">
+                <strong className="text-black dark:text-amber-300">Active Doctrine Perk: </strong>
+                {data.spotlight.perk}
+              </p>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/90 dark:bg-black/50 border border-amber-400/40 shrink-0 space-y-1 max-w-sm">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 block">
+                🎯 Bonus Round Mission
+              </span>
+              <p className="text-xs text-neutral-800 dark:text-neutral-200 font-semibold">
+                {data.spotlight.bonus_objective}
+              </p>
+              <span className="inline-block mt-1 text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                Bounty: {data.spotlight.reward}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Sovereign Spotlight: Global Alert for Other Nations */}
+      {data?.active_round && data?.spotlight && !data.spotlight.is_host && (
+        <div className="p-4 rounded-2xl bg-neutral-100 dark:bg-[#151515] border border-neutral-200 dark:border-white/10 flex items-center justify-between gap-4 flex-wrap text-xs shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-bold uppercase bg-amber-400/20 text-amber-700 dark:text-amber-300 border border-amber-400/30">
+              ⭐ Spotlight Nation
+            </span>
+            <span className="font-display font-bold text-black dark:text-white">
+              {data.spotlight.country_name} — <span className="text-neutral-600 dark:text-neutral-300">{data.spotlight.title}</span>
+            </span>
+          </div>
+          <div className="text-xs text-neutral-600 dark:text-neutral-300 font-mono">
+            Active Doctrine: <strong className="text-black dark:text-white">{data.spotlight.perk}</strong>
+          </div>
+        </div>
+      )}
+
       {/* Round Turn Status Telemetry */}
       {data?.active_round && data?.trade_eligibility && (
         <div className="p-4 rounded-2xl bg-neutral-100 dark:bg-[#151515] border border-neutral-200/90 dark:border-white/10 flex items-center justify-between gap-4 flex-wrap text-xs shadow-sm">
@@ -162,7 +216,10 @@ export const CountryDashboard: React.FC = () => {
                 }`}
               />
               <span>
-                Export Quota: {data.trade_eligibility.can_export ? 'Available (1/1)' : 'Completed (0/1) ✓'}
+                Export Quota:{' '}
+                {data.trade_eligibility.can_export
+                  ? `Available (${data.trade_eligibility.max_exports ? (data.trade_eligibility.max_exports - (data.trade_eligibility.export_count || 0)) : 1}/${data.trade_eligibility.max_exports || 1})`
+                  : `Completed (${data.trade_eligibility.max_exports || 1}/${data.trade_eligibility.max_exports || 1}) ✓`}
               </span>
             </div>
 
@@ -180,7 +237,10 @@ export const CountryDashboard: React.FC = () => {
                 }`}
               />
               <span>
-                Import Quota: {data.trade_eligibility.can_import ? 'Available (1/1)' : 'Completed (0/1) ✓'}
+                Import Quota:{' '}
+                {data.trade_eligibility.can_import
+                  ? `Available (${data.trade_eligibility.max_imports ? (data.trade_eligibility.max_imports - (data.trade_eligibility.import_count || 0)) : 1}/${data.trade_eligibility.max_imports || 1})`
+                  : `Completed (${data.trade_eligibility.max_imports || 1}/${data.trade_eligibility.max_imports || 1}) ✓`}
               </span>
             </div>
           </div>

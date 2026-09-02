@@ -80,6 +80,17 @@ def execute_trade(
 
     # ---------- CHECK ROUND TRADE LIMITS (1 IMPORT & 1 EXPORT PER ROUND) ----------
     if not override_limits:
+        from app.core.spotlight_config import get_round_spotlight
+        spotlight = get_round_spotlight(round_obj.round_number)
+
+        max_exports = 1
+        if spotlight and spotlight.get("country_username") == exporter.username:
+            max_exports = spotlight.get("max_exports", 1)
+
+        max_imports = 1
+        if spotlight and spotlight.get("country_username") == importer.username:
+            max_imports = spotlight.get("max_imports", 1)
+
         # Exporter limit check (Standby Alpha / extra_alpha is exempt)
         if exporter.username != "extra_alpha":
             existing_export_query = db.query(Trade).filter(
@@ -89,10 +100,10 @@ def execute_trade(
             )
             if existing_trade:
                 existing_export_query = existing_export_query.filter(Trade.id != existing_trade.id)
-            if existing_export_query.first():
+            if existing_export_query.count() >= max_exports:
                 raise HTTPException(
                     status_code=400,
-                    detail=f"{exporter.name} has already exported a resource in Round {round_obj.round_number}"
+                    detail=f"{exporter.name} has already used all allowed exports ({max_exports}) in Round {round_obj.round_number}"
                 )
 
         # Importer limit check (Standby Alpha / extra_alpha is exempt)
@@ -104,10 +115,10 @@ def execute_trade(
             )
             if existing_trade:
                 existing_import_query = existing_import_query.filter(Trade.id != existing_trade.id)
-            if existing_import_query.first():
+            if existing_import_query.count() >= max_imports:
                 raise HTTPException(
                     status_code=400,
-                    detail=f"{importer.name} has already imported a resource in Round {round_obj.round_number}"
+                    detail=f"{importer.name} has already used all allowed imports ({max_imports}) in Round {round_obj.round_number}"
                 )
 
     # ---------- CHECK RESOURCE ----------

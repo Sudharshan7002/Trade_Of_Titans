@@ -202,29 +202,50 @@ def get_country_dashboard(
         })
 
     # ---------------------------------------------------------
-    # TRADE ELIGIBILITY (1 IMPORT & 1 EXPORT PER ROUND)
+    # ROUND SPOTLIGHT & TRADE ELIGIBILITY
     # ---------------------------------------------------------
 
-    has_exported = False
-    has_imported = False
+    from app.core.spotlight_config import get_round_spotlight
+    spotlight_data = None
+    max_exports = 1
+    max_imports = 1
+
     if active_round:
-        has_exported = db.query(Trade).filter(
+        spotlight = get_round_spotlight(active_round.round_number)
+        if spotlight:
+            is_host = (spotlight.get("country_username") == country.username)
+            spotlight_data = {
+                **spotlight,
+                "is_host": is_host,
+            }
+            if is_host:
+                max_exports = spotlight.get("max_exports", 1)
+                max_imports = spotlight.get("max_imports", 1)
+
+    export_count = 0
+    import_count = 0
+    if active_round:
+        export_count = db.query(Trade).filter(
             Trade.round_id == active_round.id,
             Trade.export_country_id == country.id,
             Trade.status == "completed"
-        ).first() is not None
-        has_imported = db.query(Trade).filter(
+        ).count()
+        import_count = db.query(Trade).filter(
             Trade.round_id == active_round.id,
             Trade.import_country_id == country.id,
             Trade.status == "completed"
-        ).first() is not None
+        ).count()
 
     is_black_market = (country.username == "extra_alpha")
     trade_eligibility = {
-        "can_export": is_black_market or not has_exported,
-        "can_import": is_black_market or not has_imported,
-        "exported": has_exported,
-        "imported": has_imported,
+        "can_export": is_black_market or (export_count < max_exports),
+        "can_import": is_black_market or (import_count < max_imports),
+        "exported": export_count >= max_exports,
+        "imported": import_count >= max_imports,
+        "export_count": export_count,
+        "import_count": import_count,
+        "max_exports": max_exports,
+        "max_imports": max_imports,
         "is_black_market": is_black_market,
     }
 
@@ -250,4 +271,6 @@ def get_country_dashboard(
         "trades": trade_data,
 
         "trade_eligibility": trade_eligibility,
+
+        "spotlight": spotlight_data,
     }

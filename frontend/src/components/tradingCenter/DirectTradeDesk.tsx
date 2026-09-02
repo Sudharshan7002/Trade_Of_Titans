@@ -13,12 +13,13 @@ import {
   AlertCircle
 } from 'lucide-react';
 
-import { CountryIntel } from '../../types/api';
+import { CountryIntel, RoundSpotlight } from '../../types/api';
 
 interface DirectTradeDeskProps {
   activeRoundId: number | undefined;
   isExecutable: boolean;
   countriesIntel?: Record<number, CountryIntel>;
+  spotlight?: RoundSpotlight | null;
   onTradeExecuted: () => void;
 }
 
@@ -26,6 +27,7 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
   activeRoundId,
   isExecutable,
   countriesIntel,
+  spotlight,
   onTradeExecuted,
 }) => {
   const { countries, resources, getCountryName, getResourceName } = useGameState();
@@ -207,6 +209,23 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Sovereign Spotlight Desk Alert */}
+      {spotlight && (
+        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between gap-4 flex-wrap text-xs shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase bg-amber-400 text-black shadow-sm">
+              ⭐ Spotlight Active
+            </span>
+            <span className="font-display font-bold text-black dark:text-white">
+              {spotlight.country_name}: <span className="text-amber-700 dark:text-amber-300">{spotlight.title}</span>
+            </span>
+          </div>
+          <div className="text-xs font-mono text-neutral-700 dark:text-neutral-300">
+            Perk: <strong className="text-black dark:text-white">{spotlight.perk}</strong>
+          </div>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Country Selection Row */}

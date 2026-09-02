@@ -192,6 +192,7 @@ export const TradingCenterDashboard: React.FC = () => {
         activeRoundId={data?.active_round?.id}
         isExecutable={isExecutable}
         countriesIntel={data?.countries_intel}
+        spotlight={data?.spotlight}
         onTradeExecuted={fetchDashboard}
       />
 

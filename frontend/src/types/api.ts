@@ -216,6 +216,19 @@ export interface CountryDashboardData {
     status: TradeStatus;
   }>;
   trade_eligibility?: TradeEligibility;
+  spotlight?: RoundSpotlight | null;
+}
+
+export interface RoundSpotlight {
+  country_name: string;
+  country_username: string;
+  title: string;
+  perk: string;
+  bonus_objective: string;
+  reward: string;
+  max_exports?: number;
+  max_imports?: number;
+  is_host?: boolean;
 }
 
 export interface TradeEligibility {
@@ -223,6 +236,10 @@ export interface TradeEligibility {
   can_import: boolean;
   exported: boolean;
   imported: boolean;
+  export_count?: number;
+  import_count?: number;
+  max_exports?: number;
+  max_imports?: number;
   is_black_market?: boolean;
 }
 
@@ -250,6 +267,7 @@ export interface TradingCenterDashboardData {
   pending_trades: Array<Trade>;
   recent_completed_trades: Array<Trade>;
   countries_intel?: Record<number, CountryIntel>;
+  spotlight?: RoundSpotlight | null;
 }
 
 export interface AdminDashboardData {

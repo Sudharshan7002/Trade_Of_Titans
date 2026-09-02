@@ -86,7 +86,7 @@ def test_round_trade_limits_and_black_market():
             }
         )
         assert trade_2.status_code == 400
-        assert "already exported" in trade_2.json()["detail"]
+        assert "allowed exports" in trade_2.json()["detail"]
 
         # 3. Third trade: France attempts to export Timber to Germany -> MUST FAIL (Germany already imported)
         trade_3 = client.post(
@@ -103,7 +103,7 @@ def test_round_trade_limits_and_black_market():
             }
         )
         assert trade_3.status_code == 400
-        assert "already imported" in trade_3.json()["detail"]
+        assert "allowed imports" in trade_3.json()["detail"]
 
         # 4. Black Market (Standby Alpha) Exemption: Alpha can export to France
         trade_4 = client.post(

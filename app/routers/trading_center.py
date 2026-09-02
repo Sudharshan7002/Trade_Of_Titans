@@ -171,17 +171,22 @@ def get_trading_center_dashboard(
     all_inventories = db.query(Inventory).filter(Inventory.quantity > 0).all()
     all_objectives = db.query(ImportObjective).all()
 
-    # Track who has completed export or import in this round
-    round_exported_countries = set()
-    round_imported_countries = set()
+    from app.core.spotlight_config import get_round_spotlight
+    spotlight_data = None
+    if active_round:
+        spotlight_data = get_round_spotlight(active_round.round_number)
+
+    # Track how many exports/imports each country completed this round
+    export_counts = defaultdict(int)
+    import_counts = defaultdict(int)
     if active_round:
         round_trades = db.query(Trade).filter(
             Trade.round_id == active_round.id,
             Trade.status == "completed"
         ).all()
         for t in round_trades:
-            round_exported_countries.add(t.export_country_id)
-            round_imported_countries.add(t.import_country_id)
+            export_counts[t.export_country_id] += 1
+            import_counts[t.import_country_id] += 1
 
     inv_map = defaultdict(list)
     for inv in all_inventories:
@@ -198,18 +203,28 @@ def get_trading_center_dashboard(
     countries_intel = {}
     for country in all_countries:
         is_black_market = (country.username == "extra_alpha")
-        has_exported = country.id in round_exported_countries
-        has_imported = country.id in round_imported_countries
+        country_max_exports = 1
+        country_max_imports = 1
+        if spotlight_data and spotlight_data.get("country_username") == country.username:
+            country_max_exports = spotlight_data.get("max_exports", 1)
+            country_max_imports = spotlight_data.get("max_imports", 1)
+
+        exp_count = export_counts[country.id]
+        imp_count = import_counts[country.id]
 
         countries_intel[country.id] = {
             "money": float(country.money),
             "stockpiles": inv_map.get(country.id, []),
             "objectives": obj_map.get(country.id, []),
             "trade_eligibility": {
-                "can_export": is_black_market or not has_exported,
-                "can_import": is_black_market or not has_imported,
-                "exported": has_exported,
-                "imported": has_imported,
+                "can_export": is_black_market or (exp_count < country_max_exports),
+                "can_import": is_black_market or (imp_count < country_max_imports),
+                "exported": exp_count >= country_max_exports,
+                "imported": imp_count >= country_max_imports,
+                "export_count": exp_count,
+                "import_count": imp_count,
+                "max_exports": country_max_exports,
+                "max_imports": country_max_imports,
                 "is_black_market": is_black_market,
             }
         }
@@ -220,6 +235,7 @@ def get_trading_center_dashboard(
         "pending_trades": pending_trade_data,
         "recent_completed_trades": completed_trade_data,
         "countries_intel": countries_intel,
+        "spotlight": spotlight_data,
     }
 
 

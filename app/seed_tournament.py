@@ -325,6 +325,14 @@ def seed_tournament(db: Session | None = None):
         db.commit()
         print("Game state initialized: Ready for Round 1.")
 
+        try:
+            from app.routers.resources import clear_resources_cache
+            from app.routers.countries import clear_countries_cache
+            clear_resources_cache()
+            clear_countries_cache()
+        except Exception:
+            pass
+
         print("\nTournament data setup SUCCESSFUL!")
     except Exception as e:
         db.rollback()

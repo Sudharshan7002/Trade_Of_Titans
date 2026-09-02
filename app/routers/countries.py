@@ -10,6 +10,13 @@ from app.schemas.country import CountryCreate, CountryResponse
 
 router = APIRouter(prefix="/countries", tags=["Countries"])
 
+_CACHED_COUNTRIES = None
+
+
+def clear_countries_cache():
+    global _CACHED_COUNTRIES
+    _CACHED_COUNTRIES = None
+
 
 @router.post("/", response_model=CountryResponse)
 def create_country(
@@ -49,13 +56,19 @@ def create_country(
     ))
     db.commit()
     db.refresh(new_country)
+    clear_countries_cache()
 
     return new_country
 
 
 @router.get("/", response_model=list[CountryResponse])
 def get_countries(db: Session = Depends(get_db)):
-    return db.query(Country).all()
+    global _CACHED_COUNTRIES
+    if _CACHED_COUNTRIES is not None:
+        return _CACHED_COUNTRIES
+    countries = db.query(Country).all()
+    _CACHED_COUNTRIES = [CountryResponse.model_validate(c) for c in countries]
+    return _CACHED_COUNTRIES
 
 
 @router.get("/{country_id}", response_model=CountryResponse)

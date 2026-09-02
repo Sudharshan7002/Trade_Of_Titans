@@ -46,13 +46,43 @@ export const CountryDashboard: React.FC = () => {
 
   useEffect(() => {
     fetchDashboard(false);
-    const interval = setInterval(() => {
-      if (!document.hidden) {
+
+    let timeoutId: any;
+    let isCancelled = false;
+
+    const scheduleNextPoll = () => {
+      if (isCancelled) return;
+
+      // Base cadence: 20s when round is active, 35s during intermission
+      const baseMs = data?.active_round ? 20000 : 35000;
+      // Add +/- 3000ms random jitter to spread 30 concurrent user requests smoothly
+      const jitterMs = Math.floor((Math.random() - 0.5) * 6000);
+      const delay = Math.max(14000, baseMs + jitterMs);
+
+      timeoutId = setTimeout(async () => {
+        if (!document.hidden && !isCancelled) {
+          await fetchDashboard(false);
+        }
+        scheduleNextPoll();
+      }, delay);
+    };
+
+    scheduleNextPoll();
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden && !isCancelled) {
         fetchDashboard(false);
       }
-    }, 15000);
-    return () => clearInterval(interval);
-  }, [fetchDashboard]);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      isCancelled = true;
+      clearTimeout(timeoutId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [fetchDashboard, Boolean(data?.active_round)]);
 
   const handleManualRefresh = async () => {
     setIsRefreshing(true);

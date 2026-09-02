@@ -9,6 +9,13 @@ from app.schemas.resource import ResourceCreate, ResourceResponse
 
 router = APIRouter(prefix="/resources", tags=["Resources"])
 
+_CACHED_RESOURCES = None
+
+
+def clear_resources_cache():
+    global _CACHED_RESOURCES
+    _CACHED_RESOURCES = None
+
 
 @router.post("/", response_model=ResourceResponse)
 def create_resource(
@@ -34,13 +41,19 @@ def create_resource(
     db.add(new_resource)
     db.commit()
     db.refresh(new_resource)
+    clear_resources_cache()
 
     return new_resource
 
 
 @router.get("/", response_model=list[ResourceResponse])
 def get_resources(db: Session = Depends(get_db)):
-    return db.query(Resource).all()
+    global _CACHED_RESOURCES
+    if _CACHED_RESOURCES is not None:
+        return _CACHED_RESOURCES
+    resources = db.query(Resource).all()
+    _CACHED_RESOURCES = [ResourceResponse.model_validate(r) for r in resources]
+    return _CACHED_RESOURCES
 
 
 @router.get("/{resource_id}", response_model=ResourceResponse)

@@ -24,7 +24,7 @@ interface GameStateContextType {
 const GameStateContext = createContext<GameStateContextType | undefined>(undefined);
 
 export const GameStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [gameStatus, setGameStatus] = useState<GameStatus | null>(null);
   const [activeRound, setActiveRound] = useState<Round | null>(null);
   const [allRounds, setAllRounds] = useState<Round[]>([]);
@@ -34,12 +34,23 @@ export const GameStateProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const refreshReferenceData = useCallback(async () => {
     try {
+      const cachedCountries = sessionStorage.getItem('tot_countries');
+      const cachedResources = sessionStorage.getItem('tot_resources');
+
+      if (cachedCountries && cachedResources) {
+        setCountries(JSON.parse(cachedCountries));
+        setResources(JSON.parse(cachedResources));
+        return;
+      }
+
       const [cList, resList] = await Promise.all([
         referenceApi.getCountries(),
         referenceApi.getResources(),
       ]);
       setCountries(cList);
       setResources(resList);
+      sessionStorage.setItem('tot_countries', JSON.stringify(cList));
+      sessionStorage.setItem('tot_resources', JSON.stringify(resList));
     } catch (err) {
       console.error('Error fetching reference data:', err);
     }
@@ -77,7 +88,13 @@ export const GameStateProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     refreshReferenceData();
     refreshGameState();
 
-    // Gentle polling every 20 seconds if active, paused when tab is in background
+    // Redundant poll elimination:
+    // Country delegates already fetch active_round & timer in CountryDashboard.
+    // We only continuously poll /game/status & /rounds/ for operators (admin/trading_center/ranking).
+    if (user?.role === 'country') {
+      return;
+    }
+
     const interval = setInterval(() => {
       if (!document.hidden) {
         refreshGameState();
@@ -96,7 +113,7 @@ export const GameStateProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       clearInterval(interval);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isAuthenticated, refreshGameState, refreshReferenceData]);
+  }, [isAuthenticated, user?.role, refreshGameState, refreshReferenceData]);
 
   const countriesMap = React.useMemo(() => {
     const map: Record<number, Country> = {};

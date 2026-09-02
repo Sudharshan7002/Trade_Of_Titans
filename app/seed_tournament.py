@@ -39,7 +39,7 @@ COUNTRIES_DATA = [
     {
         "name": "USA",
         "username": "usa",
-        "password": "usa123",
+        "password": "Titan#US9482",
         "money": 402000,
         "exports": [("Grain", 3800), ("Electronics", 1500), ("Timber", 2000)],
         "imports": [("Textiles", 1800), ("Spices", 700), ("Gold", 400)],
@@ -47,7 +47,7 @@ COUNTRIES_DATA = [
     {
         "name": "Germany",
         "username": "germany",
-        "password": "germany123",
+        "password": "Titan#DE6317",
         "money": 350000,
         "exports": [("Steel", 2200), ("Electronics", 1400), ("Medicine", 1600)],
         "imports": [("Grain", 1800), ("Timber", 1500), ("Spices", 700)],
@@ -55,7 +55,7 @@ COUNTRIES_DATA = [
     {
         "name": "Canada",
         "username": "canada",
-        "password": "canada123",
+        "password": "Titan#CA8524",
         "money": 320000,
         "exports": [("Grain", 2400), ("Oil", 2600), ("Gold", 1000)],
         "imports": [("Livestock", 1800), ("Textiles", 1600), ("Steel", 1500)],
@@ -63,7 +63,7 @@ COUNTRIES_DATA = [
     {
         "name": "Australia",
         "username": "australia",
-        "password": "australia123",
+        "password": "Titan#AU7193",
         "money": 362000,
         "exports": [("Grain", 2600), ("Livestock", 2800), ("Gold", 1200)],
         "imports": [("Textiles", 1400), ("Steel", 1400), ("Medicine", 1000)],
@@ -71,7 +71,7 @@ COUNTRIES_DATA = [
     {
         "name": "India",
         "username": "india",
-        "password": "india123",
+        "password": "Titan#IN4826",
         "money": 194000,
         "exports": [("Textiles", 3000), ("Medicine", 1700), ("Spices", 1800)],
         "imports": [("Oil", 1800), ("Electronics", 1400), ("Gold", 500)],
@@ -79,7 +79,7 @@ COUNTRIES_DATA = [
     {
         "name": "China",
         "username": "china",
-        "password": "china123",
+        "password": "Titan#CN9531",
         "money": 206000,
         "exports": [("Textiles", 2600), ("Steel", 2800), ("Spices", 2000)],
         "imports": [("Grain", 1800), ("Livestock", 1600), ("Oil", 2200)],
@@ -87,7 +87,7 @@ COUNTRIES_DATA = [
     {
         "name": "Brazil",
         "username": "brazil",
-        "password": "brazil123",
+        "password": "Titan#BR3749",
         "money": 413000,
         "exports": [("Grain", 3200), ("Livestock", 3000), ("Timber", 2500)],
         "imports": [("Steel", 1400), ("Electronics", 1200), ("Medicine", 900)],
@@ -95,7 +95,7 @@ COUNTRIES_DATA = [
     {
         "name": "Russia",
         "username": "russia",
-        "password": "russia123",
+        "password": "Titan#RU8260",
         "money": 194000,
         "exports": [("Timber", 2200), ("Oil", 3000), ("Gold", 1200)],
         "imports": [("Livestock", 1200), ("Textiles", 1500), ("Medicine", 800)],
@@ -103,7 +103,7 @@ COUNTRIES_DATA = [
     {
         "name": "Indonesia",
         "username": "indonesia",
-        "password": "indonesia123",
+        "password": "Titan#ID5148",
         "money": 264000,
         "exports": [("Textiles", 2400), ("Timber", 2600), ("Spices", 2000)],
         "imports": [("Livestock", 1500), ("Oil", 1600), ("Medicine", 1200)],
@@ -111,7 +111,7 @@ COUNTRIES_DATA = [
     {
         "name": "Japan",
         "username": "japan",
-        "password": "japan123",
+        "password": "Titan#JP7392",
         "money": 255000,
         "exports": [("Steel", 2200), ("Electronics", 2300), ("Gold", 900)],
         "imports": [("Grain", 1800), ("Timber", 1200), ("Spices", 1000)],
@@ -119,7 +119,7 @@ COUNTRIES_DATA = [
     {
         "name": "France",
         "username": "france",
-        "password": "france123",
+        "password": "Titan#FR6285",
         "money": 386000,
         "exports": [("Grain", 2400), ("Livestock", 2800), ("Medicine", 1800)],
         "imports": [("Oil", 1800), ("Electronics", 1200), ("Spices", 700)],
@@ -127,7 +127,7 @@ COUNTRIES_DATA = [
     {
         "name": "South Korea",
         "username": "south_korea",
-        "password": "korea123",
+        "password": "Titan#KR4916",
         "money": 204000,
         "exports": [("Steel", 2600), ("Electronics", 2300), ("Medicine", 1500)],
         "imports": [("Grain", 1500), ("Textiles", 1800), ("Livestock", 2200)],
@@ -135,7 +135,7 @@ COUNTRIES_DATA = [
     {
         "name": "Italy",
         "username": "italy",
-        "password": "italy123",
+        "password": "Titan#IT8374",
         "money": 277500,
         "exports": [("Livestock", 2500), ("Textiles", 3000), ("Electronics", 2500)],
         "imports": [("Timber", 1200), ("Oil", 1600), ("Gold", 700)],
@@ -143,7 +143,7 @@ COUNTRIES_DATA = [
     {
         "name": "Mexico",
         "username": "mexico",
-        "password": "mexico123",
+        "password": "Titan#MX5629",
         "money": 216000,
         "exports": [("Textiles", 2800), ("Oil", 2400), ("Spices", 1800)],
         "imports": [("Timber", 1400), ("Steel", 1500), ("Gold", 800)],
@@ -151,7 +151,7 @@ COUNTRIES_DATA = [
     {
         "name": "Saudi Arabia",
         "username": "saudi_arabia",
-        "password": "saudi123",
+        "password": "Titan#SA3187",
         "money": 316000,
         "exports": [("Oil", 3000), ("Livestock", 2400), ("Steel", 2200)],
         "imports": [("Grain", 2000), ("Timber", 1200), ("Electronics", 1500)],
@@ -159,11 +159,11 @@ COUNTRIES_DATA = [
 ]
 
 EXTRA_COUNTRIES_DATA = [
-    {"name": "Standby Alpha", "username": "extra_alpha", "password": "extra123", "money": 300000},
-    {"name": "Standby Beta", "username": "extra_beta", "password": "extra123", "money": 300000},
-    {"name": "Standby Gamma", "username": "extra_gamma", "password": "extra123", "money": 300000},
-    {"name": "Standby Delta", "username": "extra_delta", "password": "extra123", "money": 300000},
-    {"name": "Standby Epsilon", "username": "extra_epsilon", "password": "extra123", "money": 300000},
+    {"name": "Standby Alpha", "username": "extra_alpha", "password": "Standby#Alpha91", "money": 300000},
+    {"name": "Standby Beta", "username": "extra_beta", "password": "Standby#Beta48", "money": 300000},
+    {"name": "Standby Gamma", "username": "extra_gamma", "password": "Standby#Gamma73", "money": 300000},
+    {"name": "Standby Delta", "username": "extra_delta", "password": "Standby#Delta26", "money": 300000},
+    {"name": "Standby Epsilon", "username": "extra_epsilon", "password": "Standby#Eps85", "money": 300000},
 ]
 
 

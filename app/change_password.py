@@ -20,6 +20,11 @@ def update_password(username: str, new_password: str) -> bool:
             return False
 
         user.password_hash = hash_password(new_password)
+        if user.country_id:
+            from app.models.country import Country
+            country = db.get(Country, user.country_id)
+            if country:
+                country.password = new_password
         db.commit()
         print(f"Success: Password for '{username}' (role: {user.role}) has been updated.")
         return True

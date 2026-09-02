@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+from sqlalchemy.orm import Session
 from app.database import engine, SessionLocal
 from app.models.base import Base
 from app.models.country import Country
@@ -166,30 +167,29 @@ STANDBY_ALPHA_DATA = {
 }
 
 
-def seed_tournament():
+def seed_tournament(db: Session | None = None):
     print("Connecting to database...")
     Base.metadata.create_all(bind=engine)
-    db = SessionLocal()
+    should_close = False
+    if db is None:
+        db = SessionLocal()
+        should_close = True
 
     try:
         print("Cleaning previous tournament data...")
-        if engine.dialect.name == "postgresql":
-            with engine.connect() as conn:
-                from sqlalchemy import text
-                conn.execute(text("TRUNCATE TABLE final_rankings, trades, crises, import_objectives, inventories, rounds, users, countries, resources, games RESTART IDENTITY CASCADE;"))
-                conn.commit()
-        else:
-            db.query(FinalRanking).delete()
-            db.query(Trade).delete()
-            db.query(Crisis).delete()
-            db.query(ImportObjective).delete()
-            db.query(Inventory).delete()
-            db.query(User).delete()
-            db.query(Round).delete()
-            db.query(Country).delete()
-            db.query(Resource).delete()
-            db.query(Game).delete()
-            db.commit()
+        from sqlalchemy import text
+        # Delete children before parents to satisfy PostgreSQL FK constraints without deadlocks
+        db.execute(text("DELETE FROM final_rankings;"))
+        db.execute(text("DELETE FROM trades;"))
+        db.execute(text("DELETE FROM crises;"))
+        db.execute(text("DELETE FROM import_objectives;"))
+        db.execute(text("DELETE FROM inventories;"))
+        db.execute(text("DELETE FROM users;"))
+        db.execute(text("DELETE FROM rounds;"))
+        db.execute(text("DELETE FROM countries;"))
+        db.execute(text("DELETE FROM resources;"))
+        db.execute(text("DELETE FROM games;"))
+        db.commit()
 
         # 1. Operators
         admin_pass = os.getenv("ADMIN_PASSWORD", "admin123")
@@ -293,7 +293,8 @@ def seed_tournament():
         print(f"Error seeding tournament: {e}")
         raise
     finally:
-        db.close()
+        if should_close:
+            db.close()
 
 
 if __name__ == "__main__":

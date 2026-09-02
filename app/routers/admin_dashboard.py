@@ -132,7 +132,8 @@ def reset_tournament(
     current_user: User = Depends(
         require_role("admin")
     ),
+    db: Session = Depends(get_db),
 ):
     from app.seed_tournament import seed_tournament
-    seed_tournament()
+    seed_tournament(db=db)
     return {"message": "Tournament database successfully reset to clean default baseline"}

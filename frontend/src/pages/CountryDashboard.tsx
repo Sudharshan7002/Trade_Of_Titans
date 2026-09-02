@@ -160,15 +160,35 @@ export const CountryDashboard: React.FC = () => {
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-white/90 dark:bg-black/50 border border-amber-400/40 shrink-0 space-y-1 max-w-sm">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 block">
-                🎯 Bonus Round Mission
-              </span>
+            <div
+              className={`p-4 rounded-2xl border shrink-0 space-y-1 max-w-sm ${
+                data.spotlight.bounty_claimed
+                  ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-900 dark:text-emerald-200'
+                  : 'bg-white/90 dark:bg-black/50 border-amber-400/40'
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 block">
+                  🎯 Bonus Round Mission
+                </span>
+                {data.spotlight.bounty_claimed && (
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500 text-black">
+                    AWARDED ✓
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-neutral-800 dark:text-neutral-200 font-semibold">
                 {data.spotlight.bonus_objective}
               </p>
-              <span className="inline-block mt-1 text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                Bounty: {data.spotlight.reward}
+              <span
+                className={`inline-block mt-1 text-[11px] font-mono font-bold ${
+                  data.spotlight.bounty_claimed
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : 'text-amber-600 dark:text-amber-300'
+                }`}
+              >
+                {data.spotlight.bounty_claimed ? 'Claimed: ' : 'Bounty: '}
+                {data.spotlight.reward}
               </span>
             </div>
           </div>

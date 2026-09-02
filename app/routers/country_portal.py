@@ -214,9 +214,16 @@ def get_country_dashboard(
         spotlight = get_round_spotlight(active_round.round_number)
         if spotlight:
             is_host = (spotlight.get("country_username") == country.username)
+            from app.models.spotlight_bounty import SpotlightBounty
+            bounty_claimed = db.query(SpotlightBounty).filter(
+                SpotlightBounty.round_number == active_round.round_number,
+                SpotlightBounty.country_id == country.id
+            ).first() is not None
+
             spotlight_data = {
                 **spotlight,
                 "is_host": is_host,
+                "bounty_claimed": bounty_claimed,
             }
             if is_host:
                 max_exports = spotlight.get("max_exports", 1)

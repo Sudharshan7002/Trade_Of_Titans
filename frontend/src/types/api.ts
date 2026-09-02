@@ -229,6 +229,7 @@ export interface RoundSpotlight {
   max_exports?: number;
   max_imports?: number;
   is_host?: boolean;
+  bounty_claimed?: boolean;
 }
 
 export interface TradeEligibility {

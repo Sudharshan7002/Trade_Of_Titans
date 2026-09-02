@@ -7,3 +7,4 @@ from app.models.trade import Trade
 from app.models.crisis import Crisis
 from app.models.game import Game
 from app.models.user import User
+from app.models.spotlight_bounty import SpotlightBounty

@@ -53,6 +53,41 @@ def test_spotlight_telemetry_and_double_export():
         assert germany_dash["spotlight"]["is_host"] is False
         assert germany_dash["spotlight"]["country_name"] == "USA"
 
+        tc_login = client.post("/auth/login", json={"username": "trading_center", "password": "trading123"})
+        tc_headers = {"Authorization": f"Bearer {tc_login.json()['access_token']}"}
+
+        countries = {c["name"]: c["id"] for c in client.get("/countries/", headers=admin_headers).json()}
+        resources = {r["name"]: r["id"] for r in client.get("/resources/", headers=admin_headers).json()}
+
+        usa_id = countries["USA"]
+        germany_id = countries["Germany"]
+        grain_id = resources["Grain"]
+
+        # USA exports 100 Grain to Germany at $20/unit ($2,000 total deal)
+        trade_r1 = client.post(
+            "/trading-center/execute-trade",
+            headers=tc_headers,
+            json={
+                "round_id": r1["id"],
+                "export_country_id": usa_id,
+                "import_country_id": germany_id,
+                "resource_id": grain_id,
+                "quantity": 100,
+                "price": 20.0,
+                "trade_type": "money"
+            }
+        )
+        assert trade_r1.status_code == 200, trade_r1.text
+
+        # Germany pays exactly $2,000 (from $350,000 down to $348,000)
+        germany_after = client.get("/country/dashboard", headers=germany_headers).json()
+        assert germany_after["country"]["money"] == 348000.0
+
+        # USA receives: $2,000 + 15% subsidy ($300) + $20,000 bounty = $402,000 + $22,300 = $424,300!
+        usa_after = client.get("/country/dashboard", headers=usa_headers).json()
+        assert usa_after["country"]["money"] == 424300.0
+        assert usa_after["spotlight"]["bounty_claimed"] is True
+
         # End Round 1
         assert client.post(f"/rounds/{r1['id']}/end", headers=admin_headers).status_code == 200
 

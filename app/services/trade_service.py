@@ -154,9 +154,10 @@ def execute_trade(
     # MONEY TRADE
     # =========================================================
 
+    total_value = Decimal("0.0")
     if trade_type == "money":
 
-        total_value = price * quantity
+        total_value = Decimal(str(price)) * Decimal(str(quantity))
 
         if importer.money < total_value:
             raise HTTPException(
@@ -165,7 +166,31 @@ def execute_trade(
             )
 
         importer.money -= total_value
-        exporter.money += total_value
+
+        # Calculate automatic Central Bank Export Subsidy (Spotlight Perk)
+        subsidy_rate = Decimal("0.0")
+        from app.core.spotlight_config import get_round_spotlight
+        spotlight = get_round_spotlight(round_obj.round_number)
+        if spotlight and spotlight.get("country_username") == exporter.username:
+            r_num = round_obj.round_number
+            # Round 1: USA +15% on Grain & Electronics
+            if r_num == 1 and resource.name in ("Grain", "Electronics"):
+                subsidy_rate = Decimal("0.15")
+            # Round 5: India +25% on Medicine & Spices
+            elif r_num == 5 and resource.name in ("Medicine", "Spices"):
+                subsidy_rate = Decimal("0.25")
+            # Round 9: Indonesia +30% on Spices & Textiles
+            elif r_num == 9 and resource.name in ("Spices", "Textiles"):
+                subsidy_rate = Decimal("0.30")
+            # Round 11: France +10% on all bilateral deals
+            elif r_num == 11:
+                subsidy_rate = Decimal("0.10")
+            # Round 13: Italy +20% on Textiles & Livestock
+            elif r_num == 13 and resource.name in ("Textiles", "Livestock"):
+                subsidy_rate = Decimal("0.20")
+
+        export_payout = total_value * (Decimal("1.0") + subsidy_rate)
+        exporter.money += export_payout
 
     # =========================================================
     # RESOURCE TRADE
@@ -266,8 +291,14 @@ def execute_trade(
         db.add(importer_inventory)
 
     # =========================================================
-    # IMPORT OBJECTIVE
+    # IMPORT OBJECTIVE & SPOTLIGHT MULTIPLIER
     # =========================================================
+
+    effective_quantity = quantity
+    if round_obj.round_number == 10 and resource.name == "Electronics":
+        effective_quantity = int(quantity * 1.5)
+    elif round_obj.round_number == 3 and importer.username == "canada":
+        effective_quantity = int(quantity * 1.1)
 
     objective = db.query(
         ImportObjective
@@ -277,10 +308,15 @@ def execute_trade(
     ).first()
 
     if objective:
-        objective.imported_quantity += quantity
+        objective.imported_quantity += effective_quantity
 
         if objective.imported_quantity > objective.required_quantity:
             objective.imported_quantity = objective.required_quantity
+
+    # =========================================================
+    # AUTOMATED SPOTLIGHT BOUNTY EVALUATION
+    # =========================================================
+    evaluate_and_award_bounty(db, round_obj, exporter, importer, resource, quantity)
 
     # =========================================================
     # TRADE RECORD
@@ -309,3 +345,156 @@ def execute_trade(
     db.refresh(trade)
 
     return trade
+
+
+def evaluate_and_award_bounty(
+    db: Session,
+    round_obj: Round,
+    exporter: Country,
+    importer: Country,
+    resource: Resource,
+    quantity: int,
+):
+    """Automatically checks if the active spotlight nation achieved their bonus mission and awards the bounty."""
+    r_num = round_obj.round_number
+    from app.core.spotlight_config import get_round_spotlight
+    spotlight = get_round_spotlight(r_num)
+    if not spotlight:
+        return
+
+    host_username = spotlight["country_username"]
+    host_country = db.query(Country).filter(Country.username == host_username).first()
+    if not host_country:
+        return
+
+    from app.models.spotlight_bounty import SpotlightBounty
+    existing_bounty = db.query(SpotlightBounty).filter(
+        SpotlightBounty.round_number == r_num,
+        SpotlightBounty.country_id == host_country.id,
+    ).first()
+    if existing_bounty:
+        return
+
+    bounty_earned = False
+    reward_text = spotlight["reward"]
+
+    if r_num == 1 and host_username == "usa":
+        # USA: Trade with any Asian or European nation
+        eu_asia = {"germany", "france", "italy", "india", "china", "japan", "south_korea", "indonesia"}
+        partner = importer if exporter.username == "usa" else exporter
+        if partner.username in eu_asia:
+            bounty_earned = True
+            host_country.money += Decimal("20000.0")
+
+    elif r_num == 2 and host_username == "germany":
+        # Germany: Export Steel and Electronics in round 2
+        exp_trades = db.query(Trade).filter(
+            Trade.round_id == round_obj.id,
+            Trade.export_country_id == host_country.id,
+            Trade.status == "completed"
+        ).all()
+        res_ids = {t.resource_id for t in exp_trades}
+        res_ids.add(resource.id)
+        steel_res = db.query(Resource).filter(Resource.name == "Steel").first()
+        elec_res = db.query(Resource).filter(Resource.name == "Electronics").first()
+        if steel_res and elec_res and steel_res.id in res_ids and elec_res.id in res_ids:
+            bounty_earned = True
+
+    elif r_num == 3 and host_username == "canada":
+        # Canada: Export deal with Australia, Italy, or France
+        if exporter.username == "canada" and importer.username in ("australia", "italy", "france"):
+            bounty_earned = True
+            host_country.money += Decimal("15000.0")
+
+    elif r_num == 4 and host_username == "australia":
+        # Australia: Export >= 1000 Gold or Livestock
+        if exporter.username == "australia" and resource.name in ("Gold", "Livestock") and quantity >= 1000:
+            bounty_earned = True
+            host_country.money += Decimal("20000.0")
+
+    elif r_num == 5 and host_username == "india":
+        # India: Supply Medicine or Spices to nation with < 250k balance
+        if exporter.username == "india" and resource.name in ("Medicine", "Spices") and importer.money < Decimal("250000.0"):
+            bounty_earned = True
+
+    elif r_num == 6 and host_username == "china":
+        # China: 2 bilateral trade deals with different continents
+        if exporter.username == "china" or importer.username == "china":
+            bounty_earned = True
+            host_country.money += Decimal("25000.0")
+
+    elif r_num == 7 and host_username == "brazil":
+        # Brazil: Import >= 500 units -> +500 Steel
+        if importer.username == "brazil" and quantity >= 500:
+            bounty_earned = True
+            steel_res = db.query(Resource).filter(Resource.name == "Steel").first()
+            if steel_res:
+                b_steel = db.query(Inventory).filter(
+                    Inventory.country_id == host_country.id,
+                    Inventory.resource_id == steel_res.id
+                ).first()
+                if b_steel:
+                    b_steel.quantity += 500
+                else:
+                    db.add(Inventory(country_id=host_country.id, resource_id=steel_res.id, quantity=500))
+
+    elif r_num == 8 and host_username == "russia":
+        # Russia: Import Electronics or Medicine
+        if importer.username == "russia" and resource.name in ("Electronics", "Medicine"):
+            bounty_earned = True
+            host_country.money += Decimal("25000.0")
+
+    elif r_num == 9 and host_username == "indonesia":
+        # Indonesia: Import Oil, Steel, or Timber
+        if importer.username == "indonesia" and resource.name in ("Oil", "Steel", "Timber"):
+            bounty_earned = True
+
+    elif r_num == 10 and host_username == "japan":
+        # Japan: Import >= 1000 Grain or Timber
+        if importer.username == "japan" and resource.name in ("Grain", "Timber") and quantity >= 1000:
+            bounty_earned = True
+
+    elif r_num == 11 and host_username == "france":
+        # France: Import without using Black Market
+        if importer.username == "france" and exporter.username != "extra_alpha":
+            bounty_earned = True
+            host_country.money += Decimal("20000.0")
+
+    elif r_num == 12 and host_username == "south_korea":
+        # South Korea: Complete an import
+        if importer.username == "south_korea":
+            bounty_earned = True
+
+    elif r_num == 13 and host_username == "italy":
+        # Italy: Export to USA, Canada, or Mexico
+        if exporter.username == "italy" and importer.username in ("usa", "canada", "mexico"):
+            bounty_earned = True
+            host_country.money += Decimal("15000.0")
+
+    elif r_num == 14 and host_username == "mexico":
+        # Mexico: Import Oil and Steel
+        imp_trades = db.query(Trade).filter(
+            Trade.round_id == round_obj.id,
+            Trade.import_country_id == host_country.id,
+            Trade.status == "completed"
+        ).all()
+        res_ids = {t.resource_id for t in imp_trades}
+        res_ids.add(resource.id)
+        oil_res = db.query(Resource).filter(Resource.name == "Oil").first()
+        steel_res = db.query(Resource).filter(Resource.name == "Steel").first()
+        if oil_res and steel_res and oil_res.id in res_ids and steel_res.id in res_ids:
+            bounty_earned = True
+
+    elif r_num == 15 and host_username == "saudi_arabia":
+        # Saudi: Export >= 2000 Oil
+        if exporter.username == "saudi_arabia" and resource.name == "Oil" and quantity >= 2000:
+            bounty_earned = True
+            host_country.money += Decimal("30000.0")
+
+    if bounty_earned:
+        db.add(SpotlightBounty(
+            round_number=r_num,
+            country_id=host_country.id,
+            bounty_claimed=True,
+            reward_description=reward_text
+        ))

@@ -134,6 +134,11 @@ def reset_tournament(
     ),
     db: Session = Depends(get_db),
 ):
-    from app.seed_tournament import seed_tournament
-    seed_tournament(db=db)
-    return {"message": "Tournament database successfully reset to clean default baseline"}
+    try:
+        from app.seed_tournament import seed_tournament
+        seed_tournament(db=db)
+        return {"message": "Tournament database successfully reset to clean default baseline"}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Reset error: {str(e)}")

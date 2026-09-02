@@ -26,4 +26,17 @@ export const countryApi = {
     const res = await apiClient.get<CountryDashboardData>('/country/dashboard');
     return res.data;
   },
+
+  activateShield: async (): Promise<{ success: boolean; message: string; remaining_money: number }> => {
+    const res = await apiClient.post('/country/covert-ops/shield');
+    return res.data;
+  },
+
+  launchSabotage: async (target_country_id: number, resource_id: number): Promise<{ success: boolean; was_blocked: boolean; quantity_destroyed: number; message: string; remaining_money: number }> => {
+    const res = await apiClient.post('/country/covert-ops/sabotage', {
+      target_country_id,
+      resource_id,
+    });
+    return res.data;
+  },
 };

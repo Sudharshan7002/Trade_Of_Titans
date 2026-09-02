@@ -118,12 +118,34 @@ def get_admin_dashboard(
     # RESPONSE
     # ---------------------------------------------------------
 
+    # ---------------------------------------------------------
+    # RECENT COVERT OPS DISPATCHES (HOST MIC ANNOUNCEMENTS)
+    # ---------------------------------------------------------
+
+    from app.models.covert_ops import CovertAction
+    recent_covert = db.query(CovertAction).filter(
+        CovertAction.action_type == "sabotage"
+    ).order_by(CovertAction.created_at.desc()).limit(10).all()
+
+    covert_dispatches = [
+        {
+            "id": c.id,
+            "round_number": c.round_number,
+            "was_blocked": c.was_blocked,
+            "quantity_destroyed": c.quantity_destroyed,
+            "announcement_script": c.announcement_script,
+            "created_at": c.created_at.isoformat() if c.created_at else None,
+        }
+        for c in recent_covert
+    ]
+
     return {
         "game": game_data,
         "active_round": round_data,
         "countries": country_data,
         "crises": crisis_data,
-        "pending_trades": pending_trade_data
+        "pending_trades": pending_trade_data,
+        "latest_covert_dispatches": covert_dispatches,
     }
 
 

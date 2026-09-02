@@ -217,6 +217,24 @@ export interface CountryDashboardData {
   }>;
   trade_eligibility?: TradeEligibility;
   spotlight?: RoundSpotlight | null;
+  covert_ops?: CovertOpsStatus;
+}
+
+export interface CovertOpsStatus {
+  can_sabotage: boolean;
+  can_buy_shield: boolean;
+  sabotage_used: boolean;
+  shield_used: boolean;
+  shield_active_this_round: boolean;
+}
+
+export interface AdminCovertDispatch {
+  id: number;
+  round_number: number;
+  was_blocked: boolean;
+  quantity_destroyed: number;
+  announcement_script: string;
+  created_at: string | null;
 }
 
 export interface RoundSpotlight {
@@ -297,6 +315,7 @@ export interface AdminDashboardData {
   }>;
   pending_trades: Array<Trade>;
   rankings?: Array<LiveRanking>;
+  latest_covert_dispatches?: AdminCovertDispatch[];
 }
 
 export interface DirectTradeCreate {

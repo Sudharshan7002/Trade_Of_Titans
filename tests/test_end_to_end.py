@@ -15,6 +15,8 @@ def token_for(client: TestClient, username: str, password: str) -> dict[str, str
 
 def test_admin_country_trade_confirmation_flow():
     Base.metadata.create_all(bind=engine)
+    from app.seed_tournament import seed_tournament
+    seed_tournament()
 
     with TestClient(app) as client:
         admin_headers = token_for(client, "admin", "admin123")

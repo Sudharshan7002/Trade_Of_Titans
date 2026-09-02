@@ -18,7 +18,9 @@ import {
   Layers, 
   ArrowLeftRight,
   Flame,
-  RotateCcw
+  RotateCcw,
+  Mic,
+  Radio
 } from 'lucide-react';
 
 export const AdminDashboard: React.FC = () => {
@@ -137,6 +139,55 @@ export const AdminDashboard: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Host Microphone Dispatch Feed (Covert Ops Announcements) */}
+      {data?.latest_covert_dispatches && data.latest_covert_dispatches.length > 0 && (
+        <div className="p-6 rounded-3xl bg-neutral-900 border-2 border-amber-400/50 text-white shadow-2xl space-y-4">
+          <div className="flex items-center justify-between gap-4 flex-wrap pb-3 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-2xl bg-amber-400 text-black shadow-lg animate-pulse">
+                <Mic className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-amber-400">
+                  // Host Operations • Live Room Dispatch
+                </span>
+                <h3 className="font-display font-black text-xl text-white">
+                  Microphone Announcement Feed
+                </h3>
+              </div>
+            </div>
+            <span className="text-xs font-mono text-neutral-400">
+              Read these prompts aloud on the room mic when breaking events occur!
+            </span>
+          </div>
+
+          <div className="space-y-3">
+            {data.latest_covert_dispatches.slice(0, 3).map((dispatch) => (
+              <div
+                key={dispatch.id}
+                className={`p-4 rounded-2xl border ${
+                  dispatch.was_blocked
+                    ? 'bg-red-500/10 border-red-500/30 text-red-200'
+                    : 'bg-amber-500/10 border-amber-500/30 text-amber-100'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2 mb-1.5 text-[11px] font-mono font-bold uppercase">
+                  <span className={dispatch.was_blocked ? 'text-red-400' : 'text-amber-400'}>
+                    {dispatch.was_blocked ? '🚨 SCANDAL: STRIKE DEFLECTED & ATTACKER UNMASKED' : '💣 SUCCESSFUL COVERT STRIKE'}
+                  </span>
+                  <span className="text-neutral-400 font-normal">
+                    Round #{dispatch.round_number}
+                  </span>
+                </div>
+                <p className="text-sm font-display font-bold leading-relaxed text-white">
+                  "{dispatch.announcement_script}"
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Primary Telemetry Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

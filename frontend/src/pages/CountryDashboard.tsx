@@ -17,16 +17,22 @@ import {
   Target, 
   ArrowLeftRight, 
   RefreshCw,
-  Flame
+  Flame,
+  Shield,
+  Crosshair
 } from 'lucide-react';
 
 export const CountryDashboard: React.FC = () => {
-  const { refreshGameState, getResourceName } = useGameState();
-  const { error: toastError } = useToast();
+  const { countries, resources, refreshGameState, getResourceName } = useGameState();
+  const { success: toastSuccess, error: toastError } = useToast();
 
   const [data, setData] = useState<CountryDashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const [sabotageTargetId, setSabotageTargetId] = useState<number | ''>('');
+  const [sabotageResourceId, setSabotageResourceId] = useState<number | ''>('');
+  const [isSubmittingOps, setIsSubmittingOps] = useState(false);
 
   const fetchDashboard = useCallback(async (isManual = false) => {
     try {
@@ -99,6 +105,45 @@ export const CountryDashboard: React.FC = () => {
     setIsRefreshing(true);
     setSyncCooldown(5);
     await Promise.all([fetchDashboard(true), refreshGameState()]);
+  };
+
+  const handleActivateShield = async () => {
+    if (!window.confirm("Are you sure you want to deploy your National Intel Shield for $30,000? You can only use it once in the entire tournament!")) {
+      return;
+    }
+    try {
+      setIsSubmittingOps(true);
+      const res = await countryApi.activateShield();
+      toastSuccess("Intel Shield Deployed!", res.message);
+      await fetchDashboard(false);
+    } catch (err: any) {
+      toastError("Shield Activation Failed", err.message);
+    } finally {
+      setIsSubmittingOps(false);
+    }
+  };
+
+  const handleLaunchSabotage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sabotageTargetId || !sabotageResourceId) {
+      toastError("Selection Missing", "Please select a target country and resource.");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to launch your Black Market Sabotage Strike for $60,000? If the target has an active Intel Shield, you will be caught and exposed on the host microphone!")) {
+      return;
+    }
+    try {
+      setIsSubmittingOps(true);
+      const res = await countryApi.launchSabotage(Number(sabotageTargetId), Number(sabotageResourceId));
+      toastSuccess("Covert Strike Dispatched", res.message);
+      setSabotageTargetId('');
+      setSabotageResourceId('');
+      await fetchDashboard(false);
+    } catch (err: any) {
+      toastError("Sabotage Failed", err.message);
+    } finally {
+      setIsSubmittingOps(false);
+    }
   };
 
   if (isLoading && !data) {
@@ -379,6 +424,122 @@ export const CountryDashboard: React.FC = () => {
 
       {/* Strategic Import Quotas Progress Ring & Badges */}
       <QuotaProgressRing objectives={objectives} getResourceName={getResourceName} />
+
+      {/* Black Market Shadow Operations (Covert Strike & Intel Shield) */}
+      {data?.active_round && data?.covert_ops && country?.name !== 'Standby Alpha' && (
+        <div className="p-6 rounded-3xl bg-neutral-900 border border-neutral-800 text-white shadow-xl relative overflow-hidden">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-5 border-b border-white/10">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider bg-red-500/20 text-red-400 border border-red-500/30">
+                  🏴 Black Market Shadow Syndicate
+                </span>
+                <span className="text-xs font-mono text-neutral-400">
+                  // 1-Use Per Tournament Rule
+                </span>
+              </div>
+              <h3 className="font-display font-black text-xl text-white mt-1">
+                Covert Sabotage & Counter-Intelligence
+              </h3>
+              <p className="text-xs text-neutral-400 mt-0.5">
+                Fund an anonymous strike on an enemy stockpile, or deploy counter-intelligence to unmask attackers on the host microphone.
+              </p>
+            </div>
+
+            {/* Intel Shield Status & Activation */}
+            <div className="flex items-center gap-3 shrink-0">
+              {data.covert_ops.shield_active_this_round ? (
+                <div className="px-4 py-2 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 font-display font-bold text-xs flex items-center gap-2">
+                  <Shield className="w-4 h-4 animate-pulse" />
+                  <span>Intel Shield Active for Round #{data.active_round.round_number} 🛡️</span>
+                </div>
+              ) : data.covert_ops.shield_used ? (
+                <div className="px-4 py-2 rounded-2xl bg-neutral-800 border border-neutral-700 text-neutral-400 font-display font-bold text-xs flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-neutral-500" />
+                  <span>Intel Shield Expended (0/1) ✓</span>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleActivateShield}
+                  disabled={isSubmittingOps || Number(country?.money || 0) < 30000}
+                  className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-display font-bold text-xs flex items-center gap-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  title="Deploy Intel Shield ($30,000) for this round"
+                >
+                  <Shield className="w-4 h-4" />
+                  <span>Activate Intel Shield ($30,000)</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Sabotage Strike Section */}
+          <div className="pt-5">
+            {data.covert_ops.sabotage_used ? (
+              <div className="p-4 rounded-2xl bg-neutral-800/60 border border-neutral-700 text-neutral-400 text-xs font-mono flex items-center justify-between">
+                <span>// Tournament Sabotage Contract: EXPENDED (0/1) ✓</span>
+                <span className="text-neutral-500">Your sovereign strike has been utilized for this tournament.</span>
+              </div>
+            ) : (
+              <form onSubmit={handleLaunchSabotage} className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                <div className="sm:col-span-4">
+                  <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">
+                    Target Nation
+                  </label>
+                  <select
+                    value={sabotageTargetId}
+                    onChange={(e) => setSabotageTargetId(e.target.value ? Number(e.target.value) : '')}
+                    className="w-full px-3 py-2 rounded-xl bg-neutral-800 border border-neutral-700 text-white text-xs font-display font-semibold focus:border-red-500 focus:outline-none"
+                    disabled={isSubmittingOps}
+                  >
+                    <option value="">-- Select Target Nation --</option>
+                    {countries
+                      .filter((c) => c.id !== country?.id && c.name !== 'Standby Alpha')
+                      .map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.name}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+
+                <div className="sm:col-span-4">
+                  <label className="block text-[10px] font-mono uppercase text-neutral-400 mb-1">
+                    Target Resource Stockpile
+                  </label>
+                  <select
+                    value={sabotageResourceId}
+                    onChange={(e) => setSabotageResourceId(e.target.value ? Number(e.target.value) : '')}
+                    className="w-full px-3 py-2 rounded-xl bg-neutral-800 border border-neutral-700 text-white text-xs font-display font-semibold focus:border-red-500 focus:outline-none"
+                    disabled={isSubmittingOps}
+                  >
+                    <option value="">-- Select Resource to Burn --</option>
+                    {resources.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="sm:col-span-4 flex items-end">
+                  <button
+                    type="submit"
+                    disabled={isSubmittingOps || !sabotageTargetId || !sabotageResourceId || Number(country?.money || 0) < 60000}
+                    className="w-full mt-4 sm:mt-0 px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white font-display font-bold text-xs flex items-center justify-center gap-2 shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  >
+                    <Crosshair className="w-4 h-4" />
+                    <span>Launch Strike ($60,000)</span>
+                  </button>
+                </div>
+              </form>
+            )}
+            <p className="text-[11px] font-mono text-neutral-400 mt-2">
+              * Strike burns 25% of target stockpile. Warning: If target deployed an Intel Shield, your $60,000 is forfeited and your nation is unmasked on the host microphone!
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Main Grid: Inventory Stockpiles & Objectives */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -1,3 +1,6 @@
+from decimal import Decimal
+from datetime import datetime
+from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
@@ -11,6 +14,13 @@ from app.models.import_objective import ImportObjective
 from app.models.trade import Trade
 from app.models.round import Round
 from app.models.crisis import Crisis
+from app.models.resource import Resource
+from app.models.covert_ops import CovertAction
+
+
+class SabotageRequest(BaseModel):
+    target_country_id: int
+    resource_id: int
 
 
 router = APIRouter(
@@ -257,6 +267,32 @@ def get_country_dashboard(
     }
 
     # ---------------------------------------------------------
+    # COVERT OPERATIONS TELEMETRY (1-USE PER TOURNAMENT)
+    # ---------------------------------------------------------
+
+    sabotage_record = db.query(CovertAction).filter(
+        CovertAction.country_id == country.id,
+        CovertAction.action_type == "sabotage"
+    ).first()
+
+    shield_record = db.query(CovertAction).filter(
+        CovertAction.country_id == country.id,
+        CovertAction.action_type == "shield"
+    ).first()
+
+    shield_active_this_round = False
+    if active_round and shield_record and shield_record.round_number == active_round.round_number:
+        shield_active_this_round = True
+
+    covert_ops = {
+        "can_sabotage": not is_black_market and (sabotage_record is None) and (active_round is not None),
+        "can_buy_shield": not is_black_market and (shield_record is None) and (active_round is not None),
+        "sabotage_used": sabotage_record is not None,
+        "shield_used": shield_record is not None,
+        "shield_active_this_round": shield_active_this_round,
+    }
+
+    # ---------------------------------------------------------
     # FINAL RESPONSE
     # ---------------------------------------------------------
 
@@ -280,4 +316,161 @@ def get_country_dashboard(
         "trade_eligibility": trade_eligibility,
 
         "spotlight": spotlight_data,
+
+        "covert_ops": covert_ops,
+    }
+
+
+# =============================================================
+# COVERT OPERATIONS ENDPOINTS (BLACK MARKET SERVICES)
+# =============================================================
+
+@router.post("/covert-ops/shield")
+def activate_intel_shield(
+    current_user: User = Depends(require_role("country")),
+    db: Session = Depends(get_db),
+):
+    """Activates the one-time National Intel Shield ($30,000) for the active round."""
+    country = db.get(Country, current_user.country_id)
+    if not country:
+        raise HTTPException(status_code=404, detail="Country not found")
+
+    if country.username == "extra_alpha":
+        raise HTTPException(status_code=400, detail="Black Market cannot activate an Intel Shield")
+
+    active_round = db.query(Round).filter(Round.is_active == True).first()
+    if not active_round:
+        raise HTTPException(status_code=400, detail="Intel Shield can only be purchased during an active round")
+
+    existing_shield = db.query(CovertAction).filter(
+        CovertAction.country_id == country.id,
+        CovertAction.action_type == "shield",
+    ).first()
+    if existing_shield:
+        raise HTTPException(status_code=400, detail="You have already utilized your National Intel Shield for this tournament")
+
+    SHIELD_COST = Decimal("30000.0")
+    if country.money < SHIELD_COST:
+        raise HTTPException(status_code=400, detail=f"Insufficient treasury funds ($30,000 required, current: ${float(country.money):,.0f})")
+
+    country.money -= SHIELD_COST
+
+    action = CovertAction(
+        country_id=country.id,
+        action_type="shield",
+        round_number=active_round.round_number,
+        created_at=datetime.utcnow(),
+    )
+    db.add(action)
+    db.commit()
+
+    return {
+        "success": True,
+        "message": f"National Intel Shield successfully deployed for Round {active_round.round_number}!",
+        "remaining_money": float(country.money),
+    }
+
+
+@router.post("/covert-ops/sabotage")
+def launch_covert_sabotage(
+    payload: SabotageRequest,
+    current_user: User = Depends(require_role("country")),
+    db: Session = Depends(get_db),
+):
+    """Executes the one-time Black Market Sabotage Strike ($60,000). Burns 25% of target resource unless shielded."""
+    country = db.get(Country, current_user.country_id)
+    if not country:
+        raise HTTPException(status_code=404, detail="Country not found")
+
+    if country.username == "extra_alpha":
+        raise HTTPException(status_code=400, detail="Black Market cannot launch Sabotage strikes")
+
+    active_round = db.query(Round).filter(Round.is_active == True).first()
+    if not active_round:
+        raise HTTPException(status_code=400, detail="Covert strikes can only be executed during an active round")
+
+    existing_sabotage = db.query(CovertAction).filter(
+        CovertAction.country_id == country.id,
+        CovertAction.action_type == "sabotage",
+    ).first()
+    if existing_sabotage:
+        raise HTTPException(status_code=400, detail="You have already utilized your Black Market Sabotage strike for this tournament")
+
+    SABOTAGE_COST = Decimal("60000.0")
+    if country.money < SABOTAGE_COST:
+        raise HTTPException(status_code=400, detail=f"Insufficient treasury funds ($60,000 required, current: ${float(country.money):,.0f})")
+
+    if payload.target_country_id == country.id:
+        raise HTTPException(status_code=400, detail="You cannot sabotage your own nation")
+
+    target = db.get(Country, payload.target_country_id)
+    if not target:
+        raise HTTPException(status_code=404, detail="Target nation not found")
+
+    if target.username == "extra_alpha":
+        raise HTTPException(status_code=400, detail="Standby Alpha (Black Market) cannot be targeted")
+
+    resource = db.get(Resource, payload.resource_id)
+    if not resource:
+        raise HTTPException(status_code=404, detail="Target resource not found")
+
+    target_inv = db.query(Inventory).filter(
+        Inventory.country_id == target.id,
+        Inventory.resource_id == resource.id,
+    ).first()
+    if not target_inv or target_inv.quantity <= 0:
+        raise HTTPException(status_code=400, detail=f"{target.name} does not hold any {resource.name} in their stockpile to sabotage")
+
+    # Deduct $60,000 from attacker
+    country.money -= SABOTAGE_COST
+
+    # Check if target has an active Intel Shield in this round
+    active_target_shield = db.query(CovertAction).filter(
+        CovertAction.country_id == target.id,
+        CovertAction.action_type == "shield",
+        CovertAction.round_number == active_round.round_number,
+    ).first()
+
+    if active_target_shield:
+        # THE TRAP SPRUNG! Strike deflected, attacker unmasked!
+        was_blocked = True
+        quantity_destroyed = 0
+        announcement_script = (
+            f"🚨 ATTENTION DELEGATES — INTERNATIONAL SCANDAL! "
+            f"Counter-intelligence operatives in {target.name} have just intercepted a foreign strike team attacking their {resource.name} depots! "
+            f"The rogue state funding the attack was caught red-handed and has been UNMASKED as: {country.name.upper()}! "
+            f"{country.name}'s $60,000 Black Market contract has been confiscated by the UN Tribunal!"
+        )
+    else:
+        # SUCCESSFUL STRIKE! 25% burned, attacker completely anonymous!
+        was_blocked = False
+        quantity_destroyed = max(1, int(target_inv.quantity * 0.25))
+        target_inv.quantity -= quantity_destroyed
+        announcement_script = (
+            f"🚨 ATTENTION DELEGATES — BREAKING EMERGENCY! "
+            f"A coordinated strike has devastated the primary {resource.name} storage facilities in {target.name}! "
+            f"Over {quantity_destroyed:,} units of {resource.name} were destroyed in an act of deliberate sabotage! "
+            f"The perpetrators remain unidentified at this hour."
+        )
+
+    action = CovertAction(
+        country_id=country.id,
+        action_type="sabotage",
+        round_number=active_round.round_number,
+        target_country_id=target.id,
+        resource_id=resource.id,
+        quantity_destroyed=quantity_destroyed,
+        was_blocked=was_blocked,
+        announcement_script=announcement_script,
+        created_at=datetime.utcnow(),
+    )
+    db.add(action)
+    db.commit()
+
+    return {
+        "success": True,
+        "was_blocked": was_blocked,
+        "quantity_destroyed": quantity_destroyed,
+        "message": "Operation executed. Monitor the Host microphone for incoming dispatches.",
+        "remaining_money": float(country.money),
     }

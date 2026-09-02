@@ -103,7 +103,7 @@ app.add_middleware(
 
 @app.get("/version")
 def get_version():
-    return {"version": "2.1", "status": "online"}
+    return {"version": "2.2", "status": "online"}
 
 
 app.include_router(countries.router)

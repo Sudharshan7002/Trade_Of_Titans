@@ -24,12 +24,16 @@ if DATABASE_URL.startswith("sqlite"):
         engine_options["poolclass"] = StaticPool
 else:
     # High-concurrency pool configuration for PostgreSQL (supports 15-25 concurrent delegates)
+    # prepare_threshold: 0 prevents DuplicatePreparedStatement errors on pooled Postgres (Supabase/PgBouncer)
     engine_options.update({
         "pool_size": 20,
         "max_overflow": 20,
         "pool_timeout": 15,
         "pool_recycle": 1800,
         "pool_pre_ping": True,
+        "connect_args": {
+            "prepare_threshold": 0
+        },
     })
 
 engine = create_engine(DATABASE_URL, **engine_options)

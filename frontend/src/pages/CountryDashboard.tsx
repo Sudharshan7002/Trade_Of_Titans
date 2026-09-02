@@ -84,8 +84,20 @@ export const CountryDashboard: React.FC = () => {
     };
   }, [fetchDashboard, Boolean(data?.active_round)]);
 
+  const [syncCooldown, setSyncCooldown] = useState<number>(0);
+
+  useEffect(() => {
+    if (syncCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setSyncCooldown((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [syncCooldown]);
+
   const handleManualRefresh = async () => {
+    if (syncCooldown > 0 || isRefreshing) return;
     setIsRefreshing(true);
+    setSyncCooldown(5);
     await Promise.all([fetchDashboard(true), refreshGameState()]);
   };
 
@@ -128,12 +140,14 @@ export const CountryDashboard: React.FC = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={handleManualRefresh}
-            disabled={isRefreshing}
-            className="p-2.5 rounded-2xl bg-white dark:bg-[#111111] border border-neutral-200 dark:border-white/10 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all text-xs font-display font-bold flex items-center gap-2 shadow-sm"
-            title="Refresh dashboard telemetry"
+            disabled={isRefreshing || syncCooldown > 0}
+            className="p-2.5 rounded-2xl bg-white dark:bg-[#111111] border border-neutral-200 dark:border-white/10 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all text-xs font-display font-bold flex items-center gap-2 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+            title={syncCooldown > 0 ? `Telemetry up to date. Cooldown: ${syncCooldown}s` : 'Refresh dashboard telemetry'}
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-[#CCFF00]' : ''}`} />
-            <span className="hidden sm:inline">Sync Data</span>
+            <span className="hidden sm:inline">
+              {syncCooldown > 0 ? `Synced (${syncCooldown}s)` : 'Sync Data'}
+            </span>
           </button>
         </div>
       </div>

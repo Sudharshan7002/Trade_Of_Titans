@@ -100,6 +100,9 @@ app.add_middleware(
     max_age=86400,
 )
 
+from starlette.middleware.gzip import GZipMiddleware
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 
 @app.get("/version")
 def get_version():

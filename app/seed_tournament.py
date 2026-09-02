@@ -217,6 +217,8 @@ def seed_tournament(db: Session | None = None):
         print("Cleaning previous tournament data...")
         from sqlalchemy import text
         # Delete children before parents to satisfy PostgreSQL FK constraints without deadlocks
+        db.execute(text("DELETE FROM spotlight_bounties;"))
+        db.execute(text("DELETE FROM covert_actions;"))
         db.execute(text("DELETE FROM final_rankings;"))
         db.execute(text("DELETE FROM trades;"))
         db.execute(text("DELETE FROM crises;"))

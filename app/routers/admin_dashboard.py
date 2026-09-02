@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -135,8 +135,13 @@ def reset_tournament(
     db: Session = Depends(get_db),
 ):
     try:
+        # Expunge attached ORM instances and close session so deleting users table
+        # doesn't corrupt current_user in SQLAlchemy identity map
+        db.expunge_all()
+        db.close()
+
         from app.seed_tournament import seed_tournament
-        seed_tournament(db=db)
+        seed_tournament()
         return {"message": "Tournament database successfully reset to clean default baseline"}
     except Exception as e:
         import traceback

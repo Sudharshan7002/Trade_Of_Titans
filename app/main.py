@@ -53,9 +53,10 @@ async def lifespan(_app: FastAPI):
         db = SessionLocal()
         from app.models.country import Country
 
-        # Auto-seed if empty, if obsolete standby countries from previous test runs exist, or if forced
+        # Auto-seed if empty, if user accounts are missing, if obsolete standby countries exist, or if forced
         needs_seed = (
-            db.query(Country).count() == 0
+            db.query(Country).count() < 16
+            or db.query(User).count() < 18
             or db.query(Country).filter(Country.username == "extra_beta").first() is not None
             or os.getenv("FORCE_RESET_DATABASE", "").lower() in ("true", "1", "yes")
         )

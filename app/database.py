@@ -24,7 +24,7 @@ if DATABASE_URL.startswith("sqlite"):
         engine_options["poolclass"] = StaticPool
 else:
     # High-concurrency pool configuration for PostgreSQL (supports 15-25 concurrent delegates)
-    # prepare_threshold: 0 prevents DuplicatePreparedStatement errors on pooled Postgres (Supabase/PgBouncer)
+    # prepare_threshold: None disables prepared statements on pooled Postgres (Supabase/PgBouncer transaction mode)
     engine_options.update({
         "pool_size": 20,
         "max_overflow": 20,
@@ -32,7 +32,7 @@ else:
         "pool_recycle": 1800,
         "pool_pre_ping": True,
         "connect_args": {
-            "prepare_threshold": 0
+            "prepare_threshold": None
         },
     })
 

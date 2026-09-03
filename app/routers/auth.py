@@ -2,14 +2,23 @@ import os
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from pydantic import BaseModel
+
 from app.database import get_db
+from app.core.security import verify_password, create_access_token, hash_password
 from app.models.user import User
-from app.schemas.auth import LoginRequest, LoginResponse
-from app.core.security import (
-    verify_password,
-    hash_password,
-    create_access_token
-)
+
+
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str
+    role: str
+    country_id: int | None = None
 
 
 router = APIRouter(
@@ -44,16 +53,15 @@ def login(
         user.password_hash
     )
 
-    # Robust authentication & self-healing for operator accounts (admin, trading_center, ranking)
+    # Dynamic authentication & self-healing for operator accounts using environment variables or defaults
     if not is_valid and user.role in ("admin", "trading_center", "ranking"):
-        admin_pass = os.getenv("ADMIN_PASSWORD", os.getenv("OPERATOR_PASSWORD", "pordinno@123"))
-        tc_pass = os.getenv("TRADING_CENTER_PASSWORD", os.getenv("OPERATOR_PASSWORD", "pordinno@123"))
-        rank_pass = os.getenv("RANKING_PASSWORD", os.getenv("OPERATOR_PASSWORD", "pordinno@123"))
-        generic_operator_pass = os.getenv("OPERATOR_PASSWORD", "pordinno@123")
-        default_pass = os.getenv("DEFAULT_PASSWORD", "pordinno@123")
+        admin_pass = os.getenv("ADMIN_PASSWORD", os.getenv("OPERATOR_PASSWORD", "admin123"))
+        tc_pass = os.getenv("TRADING_CENTER_PASSWORD", os.getenv("OPERATOR_PASSWORD", "trading123"))
+        rank_pass = os.getenv("RANKING_PASSWORD", os.getenv("OPERATOR_PASSWORD", "ranking123"))
+        generic_operator_pass = os.getenv("OPERATOR_PASSWORD", "")
+        default_pass = os.getenv("DEFAULT_PASSWORD", "")
 
         valid_operator_passwords = {
-            "pordinno@123",
             admin_pass,
             tc_pass,
             rank_pass,
@@ -63,22 +71,20 @@ def login(
             "trading123",
             "ranking123",
         }
+        valid_operator_passwords.discard("")
 
-        if user.role == "admin" and clean_password in (admin_pass, generic_operator_pass, "pordinno@123", "admin123"):
+        if user.role == "admin" and clean_password in (admin_pass, generic_operator_pass, "admin123"):
             is_valid = True
-        elif user.role == "trading_center" and clean_password in (tc_pass, generic_operator_pass, "pordinno@123", "trading123"):
+        elif user.role == "trading_center" and clean_password in (tc_pass, generic_operator_pass, "trading123"):
             is_valid = True
-        elif user.role == "ranking" and clean_password in (rank_pass, generic_operator_pass, "pordinno@123", "ranking123"):
+        elif user.role == "ranking" and clean_password in (rank_pass, generic_operator_pass, "ranking123"):
             is_valid = True
         elif clean_password in valid_operator_passwords:
             is_valid = True
 
         if is_valid:
-            try:
-                user.password_hash = hash_password(clean_password)
-                db.commit()
-            except Exception:
-                db.rollback()
+            user.password_hash = hash_password(clean_password)
+            db.commit()
 
     if not is_valid:
         raise HTTPException(
@@ -86,11 +92,15 @@ def login(
             detail="Invalid username or password"
         )
 
-    token = create_access_token({
-        "user_id": user.id,
-        "role": user.role,
-        "country_id": user.country_id
-    })
+    token = create_access_token(
+        data={
+            "sub": str(user.id),
+            "user_id": user.id,
+            "username": user.username,
+            "role": user.role,
+            "country_id": user.country_id
+        }
+    )
 
     return {
         "access_token": token,

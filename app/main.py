@@ -65,11 +65,11 @@ async def lifespan(_app: FastAPI):
             print("Auto-resetting tournament database to clean official baseline...")
             seed_tournament()
         else:
-            default_op_pass = os.getenv("OPERATOR_PASSWORD", "pordinno@123")
+            default_op_pass = os.getenv("OPERATOR_PASSWORD", None)
             op_defaults = [
-                ("admin", os.getenv("ADMIN_PASSWORD", default_op_pass), "admin"),
-                ("trading_center", os.getenv("TRADING_CENTER_PASSWORD", default_op_pass), "trading_center"),
-                ("ranking", os.getenv("RANKING_PASSWORD", default_op_pass), "ranking"),
+                ("admin", os.getenv("ADMIN_PASSWORD", default_op_pass or "admin123"), "admin"),
+                ("trading_center", os.getenv("TRADING_CENTER_PASSWORD", default_op_pass or "trading123"), "trading_center"),
+                ("ranking", os.getenv("RANKING_PASSWORD", default_op_pass or "ranking123"), "ranking"),
             ]
             for username, password, role in op_defaults:
                 existing = db.query(User).filter(User.username == username).first()

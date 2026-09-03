@@ -8,7 +8,7 @@
 1. [Overview & Concept](#-overview--concept)
 2. [Key Gameplay & System Features](#-key-gameplay--system-features)
 3. [User Roles & How to Use the App](#-user-roles--how-to-use-the-app)
-4. [Official Nation Credentials Cheat Sheet](#-official-nation-credentials-cheat-sheet)
+4. [Customizing Accounts & Credentials](#-customizing-accounts--credentials)
 5. [Quickstart: Run Locally](#-quickstart-run-locally)
 6. [Deployment (Render + Vercel)](#-deployment-render--vercel)
 7. [Scoring Formula & Game Theory](#-scoring-formula--game-theory)
@@ -20,7 +20,7 @@
 
 **Trade of Titans** simulates global macroeconomics, bilateral commodities exchange, and economic warfare across **15 sovereign nations** and **Standby Alpha (The Black Market)** over **15 dynamic trading rounds**.
 
-Delegates must negotiate trade pacts, meet national strategic import quotas, balance treasuries, capitalize on round-by-round **Sovereign Spotlight Perks**, and defend against **Covert Espionage Operations**.
+Delegates negotiate trade pacts, meet national strategic import quotas, balance treasuries, capitalize on round-by-round **Sovereign Spotlight Perks**, and defend against **Covert Espionage Operations**.
 
 ---
 
@@ -40,27 +40,27 @@ Delegates must negotiate trade pacts, meet national strategic import quotas, bal
 
 | Role | Default Username | Default Password | What You Can Do |
 | :--- | :--- | :--- | :--- |
-| **👑 Admin** | `admin` | `pordinno@123` | Start/end game, advance rounds, trigger market crises, monitor covert ops dispatches, reset tournament database. |
-| **⚖️ Trading Center** | `trading_center` | `pordinno@123` | Central floor referee desk. Create and approve bilateral trades, execute barter deals, override round limits when authorized. |
-| **📊 Ranking Desk** | `ranking` | `pordinno@123` | Full-screen spectator leaderboard and victory podium. Syncs live metrics across all 15 nations. |
-| **🌐 Country Delegate** | *(e.g. `usa`, `germany`)* | *(See Table Below)* | View national treasury, track 3 quota progress bars, propose trades, buy Intel Shields, and launch Sabotage attacks. |
+| **👑 Admin** | `admin` | `admin123` *(Configurable)* | Start/end game, advance rounds, trigger market crises, monitor covert ops dispatches, reset tournament database. |
+| **⚖️ Trading Center** | `trading_center` | `trading123` *(Configurable)* | Central floor referee desk. Create and approve bilateral trades, execute barter deals, override round limits when authorized. |
+| **📊 Ranking Desk** | `ranking` | `ranking123` *(Configurable)* | Full-screen spectator leaderboard and victory podium. Syncs live metrics across all 15 nations. |
+| **🌐 Country Delegate** | *(e.g. `usa`, `germany`, `brazil`)* | *(Configured during setup)* | View national treasury, track 3 quota progress bars, propose trades, buy Intel Shields, and launch Sabotage attacks. |
 
 ---
 
 ### How to Play / Run an Event (Step-by-Step):
 
 1. **The Admin starts the Game**:
-   - Log into `/login` as `admin` (`pordinno@123`).
+   - Log into `/login` as `admin`.
    - Go to the **Admin Dashboard** and click **"Start Game"** and **"Start Round 1"**.
 2. **Delegates negotiate on the floor**:
-   - Delegates log in with their country accounts on mobile or laptop (`usa`, `china`, `brazil`, etc.).
-   - They negotiate commodity swaps with other delegations to fulfill their 3 import quotas.
+   - Delegates log in with their assigned country accounts on mobile or laptop (`usa`, `china`, `brazil`, etc.).
+   - They negotiate commodity swaps with other delegations to fulfill their 3 strategic import quotas.
 3. **Referees record trades**:
    - Delegates bring their agreed deal to the **Trading Center Desk** (`trading_center`).
    - The referee inputs the exporter, importer, commodity, quantity, and price/barter commodity and clicks **"Execute Trade"**.
    - Both countries' inventories, treasuries, and quota progress bars update instantly.
 4. **Espionage (Optional Tactics)**:
-   - Countries can visit the **Black Market (Covert Ops)** tab to buy an **Intel Shield ($40k)** or launch **Depot Sabotage ($60k)** on a rival.
+   - Countries can visit the **Black Market (Covert Ops)** tab to buy an **Intel Shield** or launch **Depot Sabotage** on a rival.
    - If an attacker hits a shielded country, counter-intelligence unmasks the attacker and announces the scandal live to the summit!
 5. **Round Completion & Victory**:
    - The Admin ends each round and starts the next round.
@@ -68,29 +68,30 @@ Delegates must negotiate trade pacts, meet national strategic import quotas, bal
 
 ---
 
-## 📋 Official Nation Credentials Cheat Sheet
+## 🔐 Customizing Accounts & Credentials
 
-The database comes pre-seeded with all 15 official nations ready for immediate play:
+You can customize all operator credentials to whatever passwords you choose without editing code:
 
-| Country | Username | Password | Starting Treasury | Initial Export Strengths |
-| :--- | :--- | :--- | :--- | :--- |
-| 🇺🇸 **USA** | `usa` | `Titan#US9482` | $400,000 | Grain, Electronics, Oil |
-| 🇩🇪 **Germany** | `germany` | `Titan#DE6317` | $350,000 | Steel, Electronics, Timber |
-| 🇨🇦 **Canada** | `canada` | `Titan#CA5183` | $320,000 | Timber, Oil, Grain |
-| 🇦🇺 **Australia** | `australia` | `Titan#AU7729` | $300,000 | Gold, Livestock, Steel |
-| 🇮🇳 **India** | `india` | `Titan#IN3841` | $310,000 | Spices, Medicine, Textiles |
-| 🇨🇳 **China** | `china` | `Titan#CN8264` | $380,000 | Electronics, Steel, Textiles |
-| 🇧🇷 **Brazil** | `brazil` | `Titan#BR4915` | $290,000 | Grain, Timber, Livestock |
-| 🇷🇺 **Russia** | `russia` | `Titan#RU6038` | $340,000 | Oil, Steel, Timber |
-| 🇮🇩 **Indonesia** | `indonesia` | `Titan#ID2750` | $270,000 | Spices, Textiles, Oil |
-| 🇯🇵 **Japan** | `japan` | `Titan#JP9104` | $360,000 | Electronics, Medicine, Steel |
-| 🇫🇷 **France** | `france` | `Titan#FR4482` | $330,000 | Medicine, Livestock, Grain |
-| 🇰🇷 **South Korea** | `south_korea` | `Titan#KR1593` | $320,000 | Electronics, Steel, Medicine |
-| 🇮🇹 **Italy** | `italy` | `Titan#IT7326` | $300,000 | Textiles, Livestock, Spices |
-| 🇲🇽 **Mexico** | `mexico` | `Titan#MX8051` | $280,000 | Oil, Grain, Textiles |
-| 🇸🇦 **Saudi Arabia**| `saudi_arabia` | `Titan#SA3927` | $420,000 | Oil, Gold, Spices |
+### 1. Environment Variables (`.env`)
+Set custom passwords in your `.env` file or cloud environment variables:
+```env
+# Custom Operator Passwords
+ADMIN_PASSWORD=your_custom_admin_password
+TRADING_CENTER_PASSWORD=your_custom_trading_password
+RANKING_PASSWORD=your_custom_ranking_password
 
-*(Operator accounts `admin`, `trading_center`, and `ranking` all use password `pordinno@123`)*
+# Or set a single shared operator password:
+OPERATOR_PASSWORD=your_master_operator_password
+```
+
+### 2. Changing Passwords via CLI
+You can change any user's password instantly from the terminal without wiping tournament data:
+```bash
+python -m app.change_password <username> <new_password>
+
+# Example:
+python -m app.change_password admin MySecurePassword123
+```
 
 ---
 
@@ -149,14 +150,16 @@ Open `http://localhost:5173` in your browser.
 ## 🚀 Deployment (Render + Vercel)
 
 ### Backend on Render:
-1. Create a **Web Service** on [Render](https://render.com) pointing to this repository.
+1. Create a **Web Service** on [Render](https://render.com) pointing to your repository.
 2. Build Command: `pip install -r requirements.txt`
 3. Start Command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
 4. Environment Variables:
-   - `DATABASE_URL`: Your PostgreSQL / Supabase connection URL.
+   - `DATABASE_URL`: Your PostgreSQL connection string.
    - `SECRET_KEY`: A secure random secret string.
-   - `CORS_ORIGINS`: Your frontend URL (e.g. `https://trade-of-titans.vercel.app,http://localhost:5173`).
-   - `OPERATOR_PASSWORD`: `pordinno@123`
+   - `CORS_ORIGINS`: Your frontend URL (e.g. `https://your-app.vercel.app,http://localhost:5173`).
+   - `ADMIN_PASSWORD`: Your chosen admin password.
+   - `TRADING_CENTER_PASSWORD`: Your chosen trading referee password.
+   - `RANKING_PASSWORD`: Your chosen ranking desk password.
 
 ### Frontend on Vercel:
 1. Import the `frontend` directory on [Vercel](https://vercel.com).

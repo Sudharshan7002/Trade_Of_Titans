@@ -18,11 +18,11 @@ from app.models.user import User
 import os
 
 def get_default_users():
-    default_op_pass = os.getenv("OPERATOR_PASSWORD", "pordinno@123")
+    default_op_pass = os.getenv("OPERATOR_PASSWORD", None)
     return (
-        ("admin", os.getenv("ADMIN_PASSWORD", default_op_pass), "admin"),
-        ("trading_center", os.getenv("TRADING_CENTER_PASSWORD", default_op_pass), "trading_center"),
-        ("ranking", os.getenv("RANKING_PASSWORD", default_op_pass), "ranking"),
+        ("admin", os.getenv("ADMIN_PASSWORD", default_op_pass or "admin123"), "admin"),
+        ("trading_center", os.getenv("TRADING_CENTER_PASSWORD", default_op_pass or "trading123"), "trading_center"),
+        ("ranking", os.getenv("RANKING_PASSWORD", default_op_pass or "ranking123"), "ranking"),
     )
 
 

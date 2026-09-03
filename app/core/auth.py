@@ -23,13 +23,17 @@ def get_current_user(
             algorithms=[ALGORITHM]
         )
 
-        user_id = payload.get("user_id")
+        raw_user_id = payload.get("user_id") or payload.get("sub")
 
-        if user_id is None:
+        if raw_user_id is None:
             raise HTTPException(
                 status_code=401,
                 detail="Invalid token"
             )
+        try:
+            user_id = int(raw_user_id)
+        except (ValueError, TypeError):
+            user_id = raw_user_id
 
     except JWTError:
         raise HTTPException(

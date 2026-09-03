@@ -196,8 +196,6 @@ def get_user_hash(username: str, plain_password: str) -> str:
         return PRECOMPUTED_HASHES[username]
     if plain_password == "admin123":
         return PRECOMPUTED_HASHES["admin_admin123"]
-    if plain_password == "pordinno@123":
-        return PRECOMPUTED_HASHES["admin_pordinno"]
     if plain_password == "trading123":
         return PRECOMPUTED_HASHES["trading_trading123"]
     if plain_password == "ranking123":
@@ -232,9 +230,9 @@ def seed_tournament(db: Session | None = None):
         db.commit()
 
         # 1. Operators
-        admin_pass = os.getenv("ADMIN_PASSWORD", os.getenv("OPERATOR_PASSWORD", "pordinno@123"))
-        tc_pass = os.getenv("TRADING_CENTER_PASSWORD", os.getenv("OPERATOR_PASSWORD", "pordinno@123"))
-        rank_pass = os.getenv("RANKING_PASSWORD", os.getenv("OPERATOR_PASSWORD", "pordinno@123"))
+        admin_pass = os.getenv("ADMIN_PASSWORD", os.getenv("OPERATOR_PASSWORD", "admin123"))
+        tc_pass = os.getenv("TRADING_CENTER_PASSWORD", os.getenv("OPERATOR_PASSWORD", "trading123"))
+        rank_pass = os.getenv("RANKING_PASSWORD", os.getenv("OPERATOR_PASSWORD", "ranking123"))
 
         operators = [
             User(username="admin", password_hash=get_user_hash("admin", admin_pass), role="admin"),

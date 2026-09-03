@@ -17,15 +17,22 @@ def token_for(client: TestClient, username: str, password: str) -> dict[str, str
     return {"Authorization": f"Bearer {response.json()['access_token']}"}
 
 
-def test_operator_logins_with_pordinno():
-    """Verify that admin, trading_center, and ranking all log in with pordinno@123."""
+def test_operator_logins_clean_slate():
+    """Verify that admin, trading_center, and ranking all log in with standard/clean credentials."""
     Base.metadata.create_all(bind=engine)
     seed_tournament()
 
     with TestClient(app) as client:
-        for username in ("admin", "trading_center", "ranking", "ADMIN", "Trading_Center", "Ranking"):
-            res = client.post("/auth/login", json={"username": username, "password": "pordinno@123"})
-            assert res.status_code == 200, f"Failed to login {username} with pordinno@123: {res.text}"
+        for username, password in (
+            ("admin", "admin123"),
+            ("trading_center", "trading123"),
+            ("ranking", "ranking123"),
+            ("ADMIN", "admin123"),
+            ("Trading_Center", "trading123"),
+            ("Ranking", "ranking123"),
+        ):
+            res = client.post("/auth/login", json={"username": username, "password": password})
+            assert res.status_code == 200, f"Failed to login {username}: {res.text}"
             data = res.json()
             assert "access_token" in data
             assert data["role"] in ("admin", "trading_center", "ranking")
@@ -37,8 +44,8 @@ def test_barter_trade_serialization_and_deduplication():
     seed_tournament()
 
     with TestClient(app) as client:
-        admin_headers = token_for(client, "admin", "pordinno@123")
-        tc_headers = token_for(client, "trading_center", "pordinno@123")
+        admin_headers = token_for(client, "admin", "admin123")
+        tc_headers = token_for(client, "trading_center", "trading123")
 
         # Start game and start round 1
         client.post("/game/start", headers=admin_headers)
@@ -100,8 +107,8 @@ def test_idempotent_trade_confirmation():
     seed_tournament()
 
     with TestClient(app) as client:
-        admin_headers = token_for(client, "admin", "pordinno@123")
-        tc_headers = token_for(client, "trading_center", "pordinno@123")
+        admin_headers = token_for(client, "admin", "admin123")
+        tc_headers = token_for(client, "trading_center", "trading123")
         usa_headers = token_for(client, "usa", "Titan#US9482")
 
         client.post("/game/start", headers=admin_headers)

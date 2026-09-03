@@ -17,9 +17,9 @@ if len(sys.argv) > 1 and sys.argv[1].startswith("http"):
 
 DURATION_SECONDS = 35  # Simulation duration in seconds
 
-ADMIN_PASS = os.getenv("ADMIN_PASSWORD", "pordinno@123")
-TC_PASS = os.getenv("TRADING_CENTER_PASSWORD", "pordinno@123")
-RANKING_PASS = os.getenv("RANKING_PASSWORD", "pordinno@123")
+ADMIN_PASS = os.getenv("ADMIN_PASSWORD", "admin123")
+TC_PASS = os.getenv("TRADING_CENTER_PASSWORD", "trading123")
+RANKING_PASS = os.getenv("RANKING_PASSWORD", "ranking123")
 
 VIRTUAL_USERS = [
     {"username": "admin", "password": ADMIN_PASS, "role": "admin"},

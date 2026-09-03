@@ -6,6 +6,7 @@ const cleanBaseUrl = rawBaseUrl.endsWith('/') ? rawBaseUrl.slice(0, -1) : rawBas
 export const apiClient = axios.create({
   // Empty uses Vite's local proxy; set VITE_API_BASE_URL for a separately hosted API.
   baseURL: cleanBaseUrl,
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -43,6 +44,10 @@ apiClient.interceptors.response.use(
       } else if (Array.isArray(error.response.data.detail)) {
         errorMessage = error.response.data.detail.map((d) => d.msg).join(', ');
       }
+    } else if (error.code === 'ECONNABORTED' || error.message?.toLowerCase().includes('timeout')) {
+      errorMessage = 'The request timed out. Please refresh or check the feed before retrying.';
+    } else if (error.message === 'Network Error' || !error.response) {
+      errorMessage = 'Network connection issue. Please verify backend status or refresh.';
     } else if (error.message) {
       errorMessage = error.message;
     }

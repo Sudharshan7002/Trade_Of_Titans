@@ -92,6 +92,11 @@ def get_trading_center_dashboard(
             })
 
     # ---------------------------------------------------------
+    from app.models.resource import Resource
+    all_resources = db.query(Resource).all()
+    resource_map = {r.id: r.name for r in all_resources}
+
+    # ---------------------------------------------------------
     # PENDING TRADES
     # ---------------------------------------------------------
 
@@ -129,10 +134,12 @@ def get_trading_center_dashboard(
                 if export_country else None
             ),
             "resource_id": trade.resource_id,
+            "resource_name": resource_map.get(trade.resource_id, f"Resource #{trade.resource_id}"),
             "quantity": trade.quantity,
             "price": trade.price,
             "trade_type": trade.trade_type,
             "payment_resource_id": trade.payment_resource_id,
+            "payment_resource_name": resource_map.get(trade.payment_resource_id) if trade.payment_resource_id else None,
             "payment_quantity": trade.payment_quantity,
             "status": trade.status
         })
@@ -145,21 +152,29 @@ def get_trading_center_dashboard(
         Trade.status == "completed"
     ).order_by(
         Trade.id.desc()
-    ).limit(20).all()
+    ).limit(25).all()
 
     completed_trade_data = []
 
     for trade in completed_trades:
+        import_country = db.get(Country, trade.import_country_id)
+        export_country = db.get(Country, trade.export_country_id)
 
         completed_trade_data.append({
             "id": trade.id,
             "round_id": trade.round_id,
             "import_country_id": trade.import_country_id,
+            "import_country_name": import_country.name if import_country else None,
             "export_country_id": trade.export_country_id,
+            "export_country_name": export_country.name if export_country else None,
             "resource_id": trade.resource_id,
+            "resource_name": resource_map.get(trade.resource_id, f"Resource #{trade.resource_id}"),
             "quantity": trade.quantity,
             "price": trade.price,
             "trade_type": trade.trade_type,
+            "payment_resource_id": trade.payment_resource_id,
+            "payment_resource_name": resource_map.get(trade.payment_resource_id) if trade.payment_resource_id else None,
+            "payment_quantity": trade.payment_quantity,
             "status": trade.status
         })
 
@@ -252,6 +267,15 @@ class DirectTradeCreate(BaseModel):
     override_limits: bool = False
 
 
+# In-memory deduplication cache: trade_key -> (timestamp, trade_id, status)
+_RECENT_EXECUTIONS: dict[tuple, tuple[float, int, str]] = {}
+
+
+def clear_recent_executions():
+    global _RECENT_EXECUTIONS
+    _RECENT_EXECUTIONS = {}
+
+
 @router.post("/execute-trade")
 def execute_direct_trade(
     data: DirectTradeCreate,
@@ -260,6 +284,36 @@ def execute_direct_trade(
     ),
     db: Session = Depends(get_db)
 ):
+    now = time.time()
+    # Clean entries older than 60s
+    expired_keys = [k for k, v in _RECENT_EXECUTIONS.items() if now - v[0] > 60.0]
+    for k in expired_keys:
+        _RECENT_EXECUTIONS.pop(k, None)
+
+    trade_key = (
+        data.round_id,
+        data.export_country_id,
+        data.import_country_id,
+        data.resource_id,
+        data.quantity,
+        str(data.price),
+        data.trade_type,
+        data.payment_resource_id,
+        data.payment_quantity,
+    )
+
+    # If identical trade submitted in last 15 seconds, return existing execution result if still present in DB
+    if trade_key in _RECENT_EXECUTIONS:
+        prev_time, trade_id, status = _RECENT_EXECUTIONS[trade_key]
+        if now - prev_time <= 15.0:
+            existing_in_db = db.get(Trade, trade_id)
+            if existing_in_db and existing_in_db.status == "completed":
+                return {
+                    "message": "Trade successfully executed (deduplicated)",
+                    "trade_id": trade_id,
+                    "status": status
+                }
+
     trade = execute_trade(
         db=db,
         round_id=data.round_id,
@@ -273,6 +327,8 @@ def execute_direct_trade(
         payment_quantity=data.payment_quantity,
         override_limits=data.override_limits,
     )
+
+    _RECENT_EXECUTIONS[trade_key] = (now, trade.id, trade.status)
 
     return {
         "message": "Trade successfully executed",

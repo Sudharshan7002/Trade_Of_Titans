@@ -178,8 +178,21 @@ def create_trade(
             )
 
     # ---------------------------------------------------------
-    # CREATE PENDING TRADE
+    # CREATE PENDING TRADE (OR RETURN EXISTING PENDING DUPLICATE)
     # ---------------------------------------------------------
+
+    existing_duplicate = db.query(Trade).filter(
+        Trade.round_id == trade.round_id,
+        Trade.import_country_id == trade.import_country_id,
+        Trade.export_country_id == trade.export_country_id,
+        Trade.resource_id == trade.resource_id,
+        Trade.quantity == trade.quantity,
+        Trade.trade_type == trade.trade_type,
+        Trade.status == "pending"
+    ).first()
+
+    if existing_duplicate:
+        return existing_duplicate
 
     new_trade = Trade(
         round_id=trade.round_id,

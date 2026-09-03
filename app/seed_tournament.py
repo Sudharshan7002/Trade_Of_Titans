@@ -232,9 +232,9 @@ def seed_tournament(db: Session | None = None):
         db.commit()
 
         # 1. Operators
-        admin_pass = os.getenv("ADMIN_PASSWORD", "admin123")
-        tc_pass = os.getenv("TRADING_CENTER_PASSWORD", "trading123")
-        rank_pass = os.getenv("RANKING_PASSWORD", "ranking123")
+        admin_pass = os.getenv("ADMIN_PASSWORD", os.getenv("OPERATOR_PASSWORD", "pordinno@123"))
+        tc_pass = os.getenv("TRADING_CENTER_PASSWORD", os.getenv("OPERATOR_PASSWORD", "pordinno@123"))
+        rank_pass = os.getenv("RANKING_PASSWORD", os.getenv("OPERATOR_PASSWORD", "pordinno@123"))
 
         operators = [
             User(username="admin", password_hash=get_user_hash("admin", admin_pass), role="admin"),
@@ -330,8 +330,10 @@ def seed_tournament(db: Session | None = None):
         try:
             from app.routers.resources import clear_resources_cache
             from app.routers.countries import clear_countries_cache
+            from app.routers.trading_center import clear_recent_executions
             clear_resources_cache()
             clear_countries_cache()
+            clear_recent_executions()
         except Exception:
             pass
 

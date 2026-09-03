@@ -67,8 +67,15 @@ def confirm_trade(
         )
 
     # ---------------------------------------------------------
-    # TRADE MUST BE PENDING
+    # TRADE MUST BE PENDING (OR IDEMPOTENTLY COMPLETED)
     # ---------------------------------------------------------
+
+    if trade.status == "completed":
+        return {
+            "message": "Trade already confirmed and executed",
+            "trade_id": trade.id,
+            "status": trade.status
+        }
 
     if trade.status != "pending":
         raise HTTPException(

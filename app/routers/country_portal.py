@@ -208,6 +208,8 @@ def get_country_dashboard(
             "quantity": trade.quantity,
             "price": trade.price,
             "trade_type": trade.trade_type,
+            "payment_resource_id": trade.payment_resource_id,
+            "payment_quantity": trade.payment_quantity,
             "status": trade.status
         })
 

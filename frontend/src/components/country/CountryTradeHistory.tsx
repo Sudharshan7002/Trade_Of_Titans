@@ -93,8 +93,8 @@ export const CountryTradeHistory: React.FC<CountryTradeHistoryProps> = ({
                     <div className="flex items-center gap-1 text-[#FF5533] font-bold">
                       <Package className="w-3.5 h-3.5" />
                       <span>
-                        {trade.payment_quantity}{' '}
-                        {getResourceName(trade.payment_resource_id || undefined)}
+                        {trade.payment_quantity ?? 0}{' '}
+                        {trade.payment_resource_name || getResourceName(trade.payment_resource_id)}
                       </span>
                     </div>
                   )}

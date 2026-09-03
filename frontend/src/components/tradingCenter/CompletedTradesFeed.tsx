@@ -65,7 +65,7 @@ export const CompletedTradesFeed: React.FC<CompletedTradesFeedProps> = ({
                     <span className="font-mono text-black dark:text-[#CCFF00] font-bold">${totalCash.toFixed(2)}</span>
                   ) : (
                     <span className="font-mono text-[#FF5533] font-bold">
-                      {t.payment_quantity} {getResourceName(t.payment_resource_id || undefined)}
+                      {t.payment_quantity ?? 0} {t.payment_resource_name || getResourceName(t.payment_resource_id)}
                     </span>
                   )}
                 </td>

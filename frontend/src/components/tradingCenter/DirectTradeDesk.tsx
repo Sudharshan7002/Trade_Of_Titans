@@ -161,7 +161,8 @@ export const DirectTradeDesk: React.FC<DirectTradeDeskProps> = ({
       setOverrideLimits(false);
       onTradeExecuted();
     } catch (err: any) {
-      toastError('Trade Execution Rejected', err.message || 'Transaction could not be completed.');
+      toastError('Trade Execution Notice', err.message || 'Transaction could not be completed.');
+      onTradeExecuted();
     } finally {
       setIsSubmitting(false);
     }

@@ -313,6 +313,20 @@ def execute_trade(
         if objective.imported_quantity > objective.required_quantity:
             objective.imported_quantity = objective.required_quantity
 
+    # In barter trades, update exporter quota for the payment resource received
+    if trade_type == "resource" and payment_resource_id and payment_quantity:
+        exporter_objective = db.query(
+            ImportObjective
+        ).filter(
+            ImportObjective.country_id == export_country_id,
+            ImportObjective.resource_id == payment_resource_id
+        ).first()
+
+        if exporter_objective:
+            exporter_objective.imported_quantity += payment_quantity
+            if exporter_objective.imported_quantity > exporter_objective.required_quantity:
+                exporter_objective.imported_quantity = exporter_objective.required_quantity
+
     # =========================================================
     # AUTOMATED SPOTLIGHT BOUNTY EVALUATION
     # =========================================================

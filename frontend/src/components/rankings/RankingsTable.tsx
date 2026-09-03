@@ -34,7 +34,8 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({ rankings }) => {
         </thead>
         <tbody className="divide-y divide-neutral-100 dark:divide-white/5 text-xs">
           {sorted.map((r) => {
-            const money = 'final_money' in r ? r.final_money : r.money;
+            const money = 'final_money' in r && r.final_money !== undefined ? r.final_money : ('money' in r ? (r as any).money : 0);
+            const score = Number('score' in r && r.score !== undefined ? r.score : ('final_score' in r ? (r as any).final_score : 0));
 
             let rankBadge = (
               <span className="font-mono font-bold text-neutral-500 dark:text-neutral-400">#{r.rank}</span>
@@ -80,7 +81,7 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({ rankings }) => {
                   ${Number(money).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </td>
                 <td className="py-3.5 px-4 text-right font-display font-black text-black dark:text-[#CCFF00] text-sm">
-                  {Number(r.score).toLocaleString('en-US', { minimumFractionDigits: 1 })}{' '}
+                  {score.toLocaleString('en-US', { minimumFractionDigits: 1 })}{' '}
                   <span className="text-[11px] font-normal text-neutral-500">pts</span>
                 </td>
               </tr>

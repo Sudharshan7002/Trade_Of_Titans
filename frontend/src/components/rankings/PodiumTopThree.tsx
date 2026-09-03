@@ -18,7 +18,11 @@ export const PodiumTopThree: React.FC<PodiumTopThreeProps> = ({
   const third = rankings.find((r) => r.rank === 3);
 
   const getMoney = (r: LiveRanking | FinalRanking) => {
-    return 'final_money' in r ? r.final_money : r.money;
+    return 'final_money' in r && r.final_money !== undefined ? r.final_money : ('money' in r ? (r as any).money : 0);
+  };
+
+  const getScore = (r: LiveRanking | FinalRanking) => {
+    return Number('score' in r && r.score !== undefined ? r.score : ('final_score' in r ? (r as any).final_score : 0));
   };
 
   return (
@@ -54,7 +58,7 @@ export const PodiumTopThree: React.FC<PodiumTopThreeProps> = ({
             <div className="mt-3 p-3.5 rounded-xl bg-neutral-50 dark:bg-[#181818] border border-neutral-200/60 dark:border-white/5 w-full space-y-1">
               <div className="text-xs text-neutral-500">Total Score</div>
               <div className="font-display font-black text-xl text-black dark:text-white">
-                {Number(second.score).toLocaleString('en-US', { minimumFractionDigits: 1 })} pts
+                {getScore(second).toLocaleString('en-US', { minimumFractionDigits: 1 })} pts
               </div>
               <div className="text-[11px] text-neutral-500 font-mono">
                 Treasury: ${Number(getMoney(second)).toLocaleString()}
@@ -85,7 +89,7 @@ export const PodiumTopThree: React.FC<PodiumTopThreeProps> = ({
                 Championship Score
               </div>
               <div className="font-display font-black text-3xl sm:text-4xl text-black dark:text-[#FFD000]">
-                {Number(first.score).toLocaleString('en-US', { minimumFractionDigits: 1 })} pts
+                {getScore(first).toLocaleString('en-US', { minimumFractionDigits: 1 })} pts
               </div>
               <div className="text-xs text-neutral-600 dark:text-neutral-400 font-mono font-semibold">
                 Treasury: ${Number(getMoney(first)).toLocaleString()}
@@ -111,7 +115,7 @@ export const PodiumTopThree: React.FC<PodiumTopThreeProps> = ({
             <div className="mt-3 p-3.5 rounded-xl bg-neutral-50 dark:bg-[#181818] border border-neutral-200/60 dark:border-white/5 w-full space-y-1">
               <div className="text-xs text-neutral-500">Total Score</div>
               <div className="font-display font-black text-xl text-[#FF5533]">
-                {Number(third.score).toLocaleString('en-US', { minimumFractionDigits: 1 })} pts
+                {getScore(third).toLocaleString('en-US', { minimumFractionDigits: 1 })} pts
               </div>
               <div className="text-[11px] text-neutral-500 font-mono">
                 Treasury: ${Number(getMoney(third)).toLocaleString()}

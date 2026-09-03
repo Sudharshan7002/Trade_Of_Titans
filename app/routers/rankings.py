@@ -5,7 +5,6 @@ from app.database import get_db
 from app.core.auth import require_role
 
 from app.models.user import User
-from app.models.game import Game
 from app.models.final_ranking import FinalRanking
 
 from app.services.ranking_service import calculate_rankings
@@ -43,5 +42,21 @@ def get_final_rankings(
     ).order_by(
         FinalRanking.rank
     ).all()
+
+    # If game ended without generating FinalRanking rows, return calculated rankings
+    if not final_rankings:
+        live_calculated = calculate_rankings(db)
+        return [
+            {
+                "country_id": r["country_id"],
+                "country_name": r["country_name"],
+                "final_score": r["score"],
+                "score": r["score"],
+                "final_money": r["money"],
+                "money": r["money"],
+                "rank": r["rank"],
+            }
+            for r in live_calculated
+        ]
 
     return final_rankings
